@@ -65,6 +65,81 @@ function TiltCard({children,className="",onClick,style={}}){
 }
 
 /* ══════════════════════════════════════════════
+   MUSIC PLAYER — bottom-right mini player
+   ══════════════════════════════════════════════ */
+const PLAYLIST = [
+  /* Local: */ { title:"Song Name", artist:"Artist", src:"/music/track1.mp3", cover:"/music/cover1.jpg" },
+  /* Online: { title:"Chill Beat", artist:"Prod. Name", src:"https://your-link.com/song.mp3", cover:"https://your-link.com/cover.jpg" }, */
+];
+
+function MusicPlayer(){
+  const audioRef=useRef(null);
+  const[playing,setPlaying]=useState(false);
+  const[vol,setVol]=useState(0.4);
+  const[showVol,setShowVol]=useState(false);
+  const[track,setTrack]=useState(0);
+  const[progress,setProgress]=useState(0);
+
+  const song=PLAYLIST[track]||PLAYLIST[0];
+
+  useEffect(()=>{
+    const a=audioRef.current;if(!a)return;
+    a.volume=vol;
+    const onEnd=()=>{setTrack(t=>(t+1)%PLAYLIST.length);setPlaying(true)};
+    const onTime=()=>{if(a.duration)setProgress(a.currentTime/a.duration)};
+    a.addEventListener("ended",onEnd);
+    a.addEventListener("timeupdate",onTime);
+    return()=>{a.removeEventListener("ended",onEnd);a.removeEventListener("timeupdate",onTime)};
+  },[]);
+
+  useEffect(()=>{const a=audioRef.current;if(!a)return;a.volume=vol},[vol]);
+  useEffect(()=>{
+    const a=audioRef.current;if(!a)return;
+    a.src=song.src;a.load();setProgress(0);
+    if(playing)a.play().catch(()=>{});
+  },[track]);
+
+  const toggle=()=>{
+    const a=audioRef.current;if(!a)return;
+    if(playing){a.pause();setPlaying(false)}
+    else{a.play().then(()=>setPlaying(true)).catch(()=>{})}
+  };
+  const next=()=>{setTrack(t=>(t+1)%PLAYLIST.length)};
+
+  if(!PLAYLIST.length)return null;
+
+  return(
+    <div className="music-wrap">
+      {!playing&&<div className="mp-hint">▶ press play</div>}
+      <div className="music-player">
+      <audio ref={audioRef} preload="metadata"/>
+      {/* Cover art */}
+      <div className="mp-cover" style={{backgroundImage:`url(${song.cover})`}} onClick={toggle}>
+        <div className="mp-play-icon">{playing?<svg width="10" height="10" viewBox="0 0 24 24" fill="var(--cream)"><rect x="5" y="4" width="4" height="16"/><rect x="15" y="4" width="4" height="16"/></svg>:<svg width="10" height="10" viewBox="0 0 24 24" fill="var(--cream)"><polygon points="6,4 20,12 6,20"/></svg>}</div>
+      </div>
+      {/* Info */}
+      <div className="mp-info">
+        <div className="mp-title">{song.title}</div>
+        <div className="mp-artist">{song.artist}</div>
+        {/* Progress bar */}
+        <div className="mp-progress" onClick={(e)=>{const a=audioRef.current;if(!a||!a.duration)return;const r=e.currentTarget.getBoundingClientRect();a.currentTime=(e.clientX-r.left)/r.width*a.duration}}>
+          <div className="mp-progress-fill" style={{width:`${progress*100}%`}}/>
+        </div>
+      </div>
+      {/* Controls */}
+      <div className="mp-controls">
+        <button className="mp-btn" onClick={toggle}>{playing?<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--cream)" strokeWidth="2"><rect x="6" y="4" width="4" height="16"/><rect x="14" y="4" width="4" height="16"/></svg>:<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--cream)" strokeWidth="2"><polygon points="6,4 20,12 6,20"/></svg>}</button>
+        {PLAYLIST.length>1&&<button className="mp-btn" onClick={next}><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="var(--cream)" strokeWidth="2"><polygon points="5,4 15,12 5,20"/><line x1="19" y1="5" x2="19" y2="19"/></svg></button>}
+        <button className="mp-btn" onClick={()=>setShowVol(!showVol)} style={{position:"relative"}}><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="var(--cream)" strokeWidth="2"><polygon points="11,5 6,9 2,9 2,15 6,15 11,19"/><path d="M15.54 8.46a5 5 0 0 1 0 7.07"/></svg></button>
+      </div>
+      {/* Volume slider */}
+      {showVol&&<div className="mp-vol-wrap"><input type="range" min="0" max="1" step="0.01" value={vol} onChange={e=>setVol(parseFloat(e.target.value))} className="mp-vol-slider"/></div>}
+    </div>
+    </div>
+  );
+}
+
+/* ══════════════════════════════════════════════
    3D DARK GLOBE — Three.js dot-matrix sphere
    ══════════════════════════════════════════════ */
 function DarkGlobe(){
@@ -157,6 +232,8 @@ function DarkGlobe(){
 /* ── IST Clock ── */
 function useClock(){const[t,s]=useState("");useEffect(()=>{const tick=()=>{const d=new Date();const ist=new Date(d.getTime()+(5.5*60*60*1000)+(d.getTimezoneOffset()*60*1000));const h=ist.getHours();s(`${h%12||12}:${String(ist.getMinutes()).padStart(2,"0")} ${h>=12?"PM":"AM"} IST`)};tick();const id=setInterval(tick,10000);return()=>clearInterval(id)},[]);return t}
 
+function useDate(){const[d,setD]=useState("");useEffect(()=>{const tick=()=>{const now=new Date();const ist=new Date(now.getTime()+(5.5*60*60*1000)+(now.getTimezoneOffset()*60*1000));const day=ist.getDate();const suf=day%10===1&&day!==11?"st":day%10===2&&day!==12?"nd":day%10===3&&day!==13?"rd":"th";const months=["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];const days=["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"];setD(`${day}${suf} ${months[ist.getMonth()]} ${ist.getFullYear()}, ${days[ist.getDay()]}`)};tick();const id=setInterval(tick,60000);return()=>clearInterval(id)},[]);return d}
+
 /* ── Project Detail ── */
 function ProjectDetail({project:p,onBack}){
   useEffect(()=>{window.scrollTo(0,0)},[]);
@@ -182,13 +259,20 @@ function ProjectDetail({project:p,onBack}){
 /* ══════════════════════════════════════════════ MAIN ══════════════════════════════════════════════ */
 export default function Portfolio(){
   const[scrollY,setScrollY]=useState(0);
+  const[scrollPct,setScrollPct]=useState(0);
   const[navShow,setNavShow]=useState(true);
   const lastScroll=useRef(0);
   const[activeProject,setActiveProject]=useState(null);
   const[menuOpen,setMenuOpen]=useState(false);
+  const[showResume,setShowResume]=useState(false);
+  const[loaded,setLoaded]=useState(false);
   const istTime=useClock();
 
-  useEffect(()=>{const fn=()=>{const y=window.scrollY;setScrollY(y);if(y<100){setNavShow(true)}else if(y<lastScroll.current){setNavShow(true)}else if(y>lastScroll.current+5){setNavShow(false)}lastScroll.current=y};window.addEventListener("scroll",fn,{passive:true});return()=>window.removeEventListener("scroll",fn)},[]);
+
+  /* Preloader — fill bar then reveal */
+  useEffect(()=>{const t=setTimeout(()=>setLoaded(true),2200);return()=>clearTimeout(t)},[]);
+
+  useEffect(()=>{const fn=()=>{const y=window.scrollY;setScrollY(y);const docH=document.documentElement.scrollHeight-window.innerHeight;setScrollPct(docH>0?y/docH:0);if(y<100){setNavShow(true)}else if(y<lastScroll.current){setNavShow(true)}else if(y>lastScroll.current+5){setNavShow(false)}lastScroll.current=y};window.addEventListener("scroll",fn,{passive:true});return()=>window.removeEventListener("scroll",fn)},[]);
   const go=(id)=>{document.getElementById(id)?.scrollIntoView({behavior:"smooth"});setMenuOpen(false)};
   const navVis=navShow;
   const goBack=()=>{if(window._pageFade){window._pageFade(()=>setActiveProject(null))}else{setActiveProject(null)}};
@@ -196,6 +280,7 @@ export default function Portfolio(){
   if(activeProject){return(
     <div style={{background:"transparent",minHeight:"100vh"}}><style>{CSS}</style><div className="grain"/>
       <nav className="pill-nav"><span className="nav-brand" onClick={goBack}>ritwik.</span><div className="nav-pills"><button className="pill-btn" onClick={goBack}>Work</button></div><span className="nav-time">{istTime}</span></nav>
+      <button className="resume-btn" onClick={()=>setShowResume(true)}>Resume {IC.arr}</button>
       <ProjectDetail project={activeProject} onBack={goBack}/>
     </div>
   )}
@@ -203,6 +288,16 @@ export default function Portfolio(){
   return(
     <div style={{background:"transparent",color:"var(--cream)",minHeight:"100vh",position:"relative"}}>
       <style>{CSS}</style><div className="grain"/>
+
+      {/* ─── PRELOADER ─── */}
+      <div className="preloader" style={{opacity:loaded?0:1,pointerEvents:loaded?"none":"all",transition:"opacity 0.6s ease 0.3s"}}>
+        <div className="preloader-bar"><div className="preloader-fill"/></div>
+      </div>
+
+      {/* ─── SCROLL PROGRESS BAR ─── */}
+      <div style={{position:"fixed",top:0,left:0,width:"100%",height:"2px",background:"transparent",zIndex:1002}}>
+        <div style={{height:"100%",background:"linear-gradient(90deg,var(--cream-dim),var(--cream))",width:`${scrollPct*100}%`,transition:"width 0.08s linear",boxShadow:scrollPct>0?"0 0 8px rgba(232,228,222,0.25)":"none"}}/>
+      </div>
 
       {/* ─── PILL NAV ─── */}
       <nav className="pill-nav" style={{opacity:navVis?1:0,transform:navVis?"translateX(-50%) translateY(0)":"translateX(-50%) translateY(-20px)"}}>
@@ -214,12 +309,14 @@ export default function Portfolio(){
         <span className="nav-brand" onClick={()=>go("home")}>ritwik.</span>
         <button className="mob-btn" onClick={()=>setMenuOpen(!menuOpen)}>{menuOpen?"CLOSE":"MENU"}</button>
       </div>
+      <button className="resume-btn" onClick={()=>setShowResume(true)}>Resume {IC.arr}</button>
       {menuOpen&&<div style={{position:"fixed",inset:0,zIndex:999,background:"rgba(15,15,15,0.97)",display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center",gap:"28px"}}>
         {["about","skills","projects","experience","contact"].map(s=><button key={s} onClick={()=>go(s)} style={{background:"none",border:"none",cursor:"pointer",fontFamily:"'Bebas Neue'",fontSize:"36px",color:"var(--cream)",letterSpacing:"0.08em",textTransform:"uppercase"}}>{s}</button>)}
+        <button onClick={()=>{setShowResume(true);setMenuOpen(false)}} style={{background:"none",border:"none",cursor:"pointer",fontFamily:"'Bebas Neue'",fontSize:"36px",color:"var(--cream)",letterSpacing:"0.08em",textTransform:"uppercase"}}>Resume</button>
       </div>}
 
       {/* ─── HERO WITH GLOBE ─── */}
-      <section id="home" style={{minHeight:"100vh",display:"flex",alignItems:"center",padding:"120px 40px 80px",position:"relative",overflow:"hidden"}}>
+      <section id="home" style={{minHeight:"100vh",display:"flex",alignItems:"center",justifyContent:"center",padding:"120px 40px 80px",position:"relative",overflow:"hidden"}}>
         <div style={{position:"absolute",bottom:0,left:0,right:0,height:"30%",background:"linear-gradient(to top,var(--bg),transparent)",pointerEvents:"none",zIndex:1}}/>
         <div className="hero-row">
           <div style={{flex:1,zIndex:1}}>
@@ -237,7 +334,7 @@ export default function Portfolio(){
       </section>
 
       {/* ─── ABOUT ─── */}
-      <section id="about" style={{padding:"120px 40px",maxWidth:"1100px",margin:"0 auto"}}>
+      <section id="about" style={{padding:"120px 40px",maxWidth:"1400px",margin:"0 auto"}}>
         <Reveal><div className="s-tag">About</div></Reveal>
         <Reveal delay={0.05}><h2 className="s-head">Building with data,<br/>driven by curiosity.</h2></Reveal>
         <div className="about-grid" style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:"60px",alignItems:"start"}}>
@@ -258,13 +355,13 @@ export default function Portfolio(){
 
       {/* ─── SKILLS MARQUEE ─── */}
       <section id="skills" style={{padding:"100px 0",overflow:"hidden"}}>
-        <Reveal><div style={{textAlign:"center",marginBottom:"48px",padding:"0 40px"}}><div className="s-tag">What I work with</div><h2 className="s-head">The arsenal</h2></div></Reveal>
+        <Reveal><div style={{textAlign:"center",marginBottom:"48px",padding:"0 40px",maxWidth:"1400px",margin:"0 auto"}}><div className="s-tag">What I work with</div><h2 className="s-head">The arsenal</h2></div></Reveal>
         <div className="marquee-left" style={{marginBottom:"16px",overflow:"hidden"}}><div className="marquee-track">{SKILLS_ROW1.map((s,i)=><div key={`a${i}`} className="marquee-item">{s}</div>)}</div></div>
         <div className="marquee-right" style={{overflow:"hidden"}}><div className="marquee-track">{SKILLS_ROW2.map((s,i)=><div key={`b${i}`} className="marquee-item">{s}</div>)}</div></div>
       </section>
 
       {/* ─── PROJECTS ─── */}
-      <section id="projects" style={{padding:"100px 40px",maxWidth:"1200px",margin:"0 auto"}}>
+      <section id="projects" style={{padding:"100px 40px",maxWidth:"1400px",margin:"0 auto"}}>
         <Reveal><div className="s-tag">Selected Work</div></Reveal>
         <Reveal delay={0.05}><h2 className="s-head" style={{fontSize:"clamp(40px,7vw,80px)",marginBottom:"64px"}}>See my latest work</h2></Reveal>
         <div className="projects-grid">
@@ -280,7 +377,7 @@ export default function Portfolio(){
       </section>
 
       {/* ─── EXPERIENCE ─── */}
-      <section id="experience" style={{padding:"100px 40px",maxWidth:"1100px",margin:"0 auto"}}>
+      <section id="experience" style={{padding:"100px 40px",maxWidth:"1400px",margin:"0 auto"}}>
         <Reveal><div className="s-tag">Experience</div></Reveal>
         <Reveal delay={0.05}><h2 className="s-head">Leadership & Activities</h2></Reveal>
         <div style={{marginLeft:"8px"}}>{EXPERIENCE.map((exp,i)=><Reveal key={i} delay={i*0.1}><div className="exp-card">
@@ -293,18 +390,47 @@ export default function Portfolio(){
       </section>
 
       {/* ─── CONTACT ─── */}
-      <section id="contact" style={{padding:"100px 40px",maxWidth:"1100px",margin:"0 auto"}}>
+      <section id="contact" style={{padding:"100px 40px",maxWidth:"1400px",margin:"0 auto"}}>
         <Reveal><div className="s-tag">Contact</div></Reveal>
         <Reveal delay={0.05}><h2 className="s-head">Let's connect</h2></Reveal>
-        <Reveal delay={0.1}><p style={{fontSize:"16px",color:"var(--cream-dim)",lineHeight:1.7,maxWidth:"480px",marginBottom:"40px"}}>Open to internships, collaborations, and interesting conversations.</p></Reveal>
-        <div className="contact-grid" style={{display:"grid",gridTemplateColumns:"repeat(2,1fr)",gap:"16px",maxWidth:"600px"}}>
-          {[{icon:IC.mail,label:"Email",value:"kritwik495@gmail.com",href:"mailto:kritwik495@gmail.com"},{icon:IC.phone,label:"Phone",value:"+91 98910 03096",href:"tel:+919891003096"},{icon:IC.gh,label:"GitHub",value:"GitHub",href:"https://github.com/"},{icon:IC.li,label:"LinkedIn",value:"LinkedIn",href:"https://linkedin.com/"}].map((c,i)=>
-            <Reveal key={i} delay={0.1+i*0.06}><a href={c.href} target="_blank" rel="noopener noreferrer" className="contact-link"><div style={{color:"var(--cream-dim)"}}>{c.icon}</div><div><div style={{fontSize:"11px",color:"var(--mid)",fontFamily:"'JetBrains Mono',monospace",letterSpacing:"0.1em",textTransform:"uppercase"}}>{c.label}</div><div style={{fontSize:"14px",marginTop:"2px"}}>{c.value}</div></div></a></Reveal>
-          )}
+        <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:"60px",alignItems:"start"}}>
+          <Reveal delay={0.1}><div>
+            <p style={{fontSize:"17px",color:"var(--cream-dim)",lineHeight:1.8,marginBottom:"32px"}}>Open to internships, collaborations, and interesting conversations. Drop me a line or connect on socials.</p>
+            <a href="mailto:kritwik495@gmail.com" className="contact-cta">
+              <div style={{display:"flex",alignItems:"center",gap:"14px"}}>
+                <div style={{width:"48px",height:"48px",borderRadius:"50%",background:"rgba(232,228,222,0.06)",display:"flex",alignItems:"center",justifyContent:"center",flexShrink:0}}>{IC.mail}</div>
+                <div><div style={{fontSize:"12px",color:"var(--mid)",fontFamily:"'JetBrains Mono',monospace",letterSpacing:"0.1em",textTransform:"uppercase",marginBottom:"4px"}}>Email me</div>
+                <div style={{fontSize:"18px",fontWeight:500}}>kritwik495@gmail.com</div></div>
+              </div>
+              <span style={{color:"var(--cream-dim)",transition:"transform 0.3s"}}>{IC.arr}</span>
+            </a>
+          </div></Reveal>
+          <Reveal delay={0.15}><div style={{display:"flex",flexDirection:"column",gap:"14px"}}>
+            {[{icon:IC.phone,label:"Phone",value:"+91 98910 03096",href:"tel:+919891003096"},{icon:IC.gh,label:"GitHub",value:"@Ritzwik",href:"https://github.com/Ritzwik"},{icon:IC.li,label:"LinkedIn",value:"Ritwik Kumar",href:"https://www.linkedin.com/in/ritwikk03/"}].map((c,i)=>
+              <a key={i} href={c.href} target="_blank" rel="noopener noreferrer" className="contact-link"><div style={{width:"36px",height:"36px",borderRadius:"50%",background:"rgba(232,228,222,0.04)",display:"flex",alignItems:"center",justifyContent:"center",flexShrink:0,color:"var(--cream-dim)"}}>{c.icon}</div><div style={{flex:1}}><div style={{fontSize:"10px",color:"var(--mid)",fontFamily:"'JetBrains Mono',monospace",letterSpacing:"0.12em",textTransform:"uppercase"}}>{c.label}</div><div style={{fontSize:"14px",marginTop:"2px"}}>{c.value}</div></div><span style={{color:"var(--mid)",opacity:0.5}}>{IC.arr}</span></a>
+            )}
+          </div></Reveal>
         </div>
       </section>
 
       <footer style={{borderTop:"1px solid var(--border)",padding:"40px",textAlign:"center"}}><p style={{fontFamily:"'JetBrains Mono',monospace",fontSize:"12px",color:"var(--mid)"}}>&copy; {new Date().getFullYear()} Ritwik Kumar</p></footer>
+      <MusicPlayer/>
+      {/* ─── BACK TO TOP ─── */}
+      <button className="back-to-top" onClick={()=>window.scrollTo({top:0,behavior:"smooth"})} style={{opacity:scrollPct>0.3?1:0,transform:scrollPct>0.3?"translateY(0)":"translateY(20px)",pointerEvents:scrollPct>0.3?"auto":"none"}}>
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--cream)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M18 15l-6-6-6 6"/></svg>
+      </button>
+      {showResume&&<div className="resume-overlay" onClick={(e)=>{if(e.target===e.currentTarget)setShowResume(false)}}>
+        <div className="resume-modal">
+          <div className="resume-header">
+            <span style={{fontFamily:"'Bebas Neue'",fontSize:"22px",letterSpacing:"0.04em"}}>Resume</span>
+            <div style={{display:"flex",gap:"10px",alignItems:"center"}}>
+              <a href="/resume.pdf" download className="resume-dl">Download {IC.arr}</a>
+              <button onClick={()=>setShowResume(false)} className="resume-close">&times;</button>
+            </div>
+          </div>
+          <div className="resume-body"><iframe src="/resume.pdf" title="Resume" style={{width:"100%",height:"100%",border:"none",borderRadius:"0 0 12px 12px"}}/></div>
+        </div>
+      </div>}
     </div>
   );
 }
@@ -313,8 +439,8 @@ export default function Portfolio(){
 const CSS=`
 @import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500;600;700&family=JetBrains+Mono:wght@300;400&display=swap');
 :root{--bg:#0f0f0f;--surface:#181818;--border:#282828;--cream:#e8e4de;--cream-dim:#9e9a94;--dark:#0f0f0f;--mid:#5e5a54}
-*{box-sizing:border-box;margin:0;padding:0}html{scroll-behavior:smooth}
-body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--cream);overflow-x:hidden}
+*{box-sizing:border-box;margin:0;padding:0}html{scroll-behavior:smooth;text-size-adjust:100%;-webkit-text-size-adjust:100%}
+body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--cream);overflow-x:hidden;min-width:320px}
 ::selection{background:rgba(232,228,222,0.2)}::-webkit-scrollbar{width:5px}::-webkit-scrollbar-track{background:var(--bg)}::-webkit-scrollbar-thumb{background:var(--border);border-radius:3px}
 @keyframes marquee-left{0%{transform:translateX(0)}100%{transform:translateX(-50%)}}
 @keyframes marquee-right{0%{transform:translateX(-50%)}100%{transform:translateX(0)}}
@@ -322,27 +448,58 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--cream);ov
 @keyframes fadeUp{from{opacity:0;transform:translateY(40px)}to{opacity:1;transform:translateY(0)}}
 @keyframes grain{0%,100%{transform:translate(0)}25%{transform:translate(-3%,-8%)}50%{transform:translate(5%,3%)}75%{transform:translate(-7%,6%)}}
 .grain{position:fixed;inset:0;pointer-events:none;z-index:9997;opacity:0.25;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");animation:grain 6s steps(8) infinite}
-.pill-nav{position:fixed;top:16px;left:50%;transform:translateX(-50%);z-index:1000;display:flex;align-items:center;gap:20px;padding:10px 24px;background:rgba(30,30,30,0.65);backdrop-filter:blur(24px) saturate(1.4);-webkit-backdrop-filter:blur(24px) saturate(1.4);border:1px solid rgba(255,255,255,0.06);border-radius:999px;transition:opacity 0.4s,transform 0.4s}
+.pill-nav{position:fixed;top:16px;left:50%;transform:translateX(-50%);z-index:1000;display:flex;align-items:center;gap:20px;padding:10px 24px;background:linear-gradient(135deg,rgba(40,40,40,0.55),rgba(20,20,20,0.65));backdrop-filter:blur(32px) saturate(1.6);-webkit-backdrop-filter:blur(32px) saturate(1.6);border:1px solid rgba(255,255,255,0.08);border-top-color:rgba(255,255,255,0.12);border-left-color:rgba(255,255,255,0.1);border-radius:999px;box-shadow:0 8px 32px rgba(0,0,0,0.4),inset 0 1px 0 rgba(255,255,255,0.06);transition:opacity 0.4s,transform 0.4s}
 .nav-brand{font-family:'Bebas Neue';font-size:20px;letter-spacing:0.04em;cursor:pointer;color:var(--cream)}.nav-pills{display:flex;gap:4px}
 .pill-btn{background:none;border:none;cursor:pointer;font-family:'DM Sans';font-size:13px;font-weight:500;color:var(--cream-dim);padding:6px 14px;border-radius:999px;transition:all 0.25s}.pill-btn:hover{color:var(--cream);background:rgba(255,255,255,0.08)}
 .nav-time{font-family:'JetBrains Mono',monospace;font-size:13px;color:var(--cream);font-weight:500;white-space:nowrap}
-.mobile-nav{display:none;position:fixed;top:0;left:0;right:0;z-index:1000;padding:16px 24px;justify-content:space-between;align-items:center;background:rgba(15,15,15,0.9);backdrop-filter:blur(16px);border-bottom:1px solid var(--border);transition:opacity 0.4s}
+.resume-btn{position:fixed;top:16px;right:20px;z-index:1001;display:inline-flex;align-items:center;gap:5px;padding:8px 18px;font-family:'DM Sans',sans-serif;font-size:13px;font-weight:600;color:var(--cream);background:linear-gradient(135deg,rgba(40,40,40,0.55),rgba(20,20,20,0.65));backdrop-filter:blur(32px) saturate(1.6);-webkit-backdrop-filter:blur(32px) saturate(1.6);border:1px solid rgba(255,255,255,0.08);border-top-color:rgba(255,255,255,0.12);border-radius:999px;box-shadow:0 8px 32px rgba(0,0,0,0.4),inset 0 1px 0 rgba(255,255,255,0.06);transition:all 0.3s;letter-spacing:0.02em;cursor:pointer}.resume-btn:hover{background:linear-gradient(135deg,rgba(60,60,60,0.6),rgba(30,30,30,0.7));border-color:rgba(255,255,255,0.15);box-shadow:0 12px 40px rgba(0,0,0,0.5),inset 0 1px 0 rgba(255,255,255,0.1)}
+.date-badge{position:fixed;top:20px;left:24px;z-index:1001;font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:0.04em;color:var(--mid);transition:color 0.3s}.date-badge:hover{color:var(--cream-dim)}
+.mobile-nav{display:none;position:fixed;top:0;left:0;right:0;z-index:1000;padding:16px 24px;justify-content:space-between;align-items:center;background:linear-gradient(180deg,rgba(20,20,20,0.8),rgba(15,15,15,0.7));backdrop-filter:blur(32px) saturate(1.6);-webkit-backdrop-filter:blur(32px) saturate(1.6);border-bottom:1px solid rgba(255,255,255,0.06);transition:opacity 0.4s}
 .mob-btn{background:none;border:1px solid var(--border);border-radius:6px;padding:8px 14px;color:var(--cream);cursor:pointer;font-size:12px;font-family:'DM Sans'}
 .hero-title{font-family:'Bebas Neue',sans-serif;font-size:clamp(80px,18vw,240px);line-height:0.88;letter-spacing:-0.02em;color:var(--cream);text-transform:uppercase;animation:heroText 1s cubic-bezier(0.16,1,0.3,1) 0.2s both}
-.hero-row{display:flex;align-items:center;justify-content:space-between;width:100%;max-width:1200px;gap:0}
-.globe-container{flex:0 0 auto;margin-right:-60px;opacity:0.85;animation:fadeUp 1.2s ease 0.4s both}
+.hero-row{display:flex;align-items:center;justify-content:space-between;width:100%;max-width:1400px;margin:0 auto;gap:0}
+.globe-container{flex:0 0 auto;opacity:0.85;animation:fadeUp 1.2s ease 0.4s both}
 .globe-wrap{width:clamp(300px,35vw,500px);height:clamp(300px,35vw,500px)}
 .btn-primary{padding:14px 32px;background:var(--cream);color:var(--dark);border:none;border-radius:6px;cursor:pointer;font-family:'DM Sans';font-size:14px;font-weight:600;transition:transform 0.2s,box-shadow 0.2s}.btn-primary:hover{transform:translateY(-2px);box-shadow:0 8px 24px rgba(232,228,222,0.15)}
 .btn-ghost{padding:14px 32px;background:transparent;color:var(--cream);border:1px solid var(--border);border-radius:6px;cursor:pointer;font-family:'DM Sans';font-size:14px;font-weight:500;transition:border-color 0.3s}.btn-ghost:hover{border-color:var(--cream-dim)}
 .marquee-track{display:flex;width:max-content;gap:16px}.marquee-left .marquee-track{animation:marquee-left 45s linear infinite}.marquee-right .marquee-track{animation:marquee-right 45s linear infinite}.marquee-left:hover .marquee-track,.marquee-right:hover .marquee-track{animation-play-state:paused}
-.marquee-item{padding:14px 36px;border:1px solid var(--border);border-radius:6px;font-family:'JetBrains Mono',monospace;font-size:14px;color:var(--cream-dim);white-space:nowrap;transition:all 0.3s;background:var(--surface)}.marquee-item:hover{color:var(--cream);border-color:var(--cream-dim);background:rgba(232,228,222,0.04)}
+.marquee-item{padding:14px 36px;border:1px solid var(--border);border-radius:6px;font-family:'JetBrains Mono',monospace;font-size:14px;color:var(--cream-dim);white-space:nowrap;transition:all 0.6s ease;background:var(--surface)}
+.marquee-track:has(.marquee-item:hover) .marquee-item{opacity:0.25;border-color:var(--border);color:var(--mid)}
+.marquee-track:has(.marquee-item:hover) .marquee-item:hover{opacity:1;color:var(--cream);border-color:rgba(232,228,222,0.35);background:rgba(232,228,222,0.06);box-shadow:0 0 20px rgba(232,228,222,0.08);transform:scale(1.05)}
 .projects-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:24px}
 .project-tile{cursor:pointer;border-radius:16px;overflow:hidden;border:1px solid var(--border)}.project-tile:hover{border-color:rgba(232,228,222,0.15);box-shadow:0 24px 60px rgba(0,0,0,0.5)}
 .project-img{width:100%;aspect-ratio:16/10;overflow:hidden;position:relative}.project-tile:hover .project-img img,.project-tile:hover .project-img>div{transform:scale(1.03);transition:transform 0.6s cubic-bezier(0.16,1,0.3,1)}.project-info{padding:20px 24px}
 .s-tag{font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:0.2em;text-transform:uppercase;color:var(--cream-dim);margin-bottom:16px}
 .s-head{font-family:'Bebas Neue',sans-serif;font-size:clamp(36px,6vw,64px);line-height:1;letter-spacing:0.02em;text-transform:uppercase;color:var(--cream);margin-bottom:48px}
-.contact-link{display:flex;align-items:center;gap:16px;padding:20px 24px;background:var(--surface);border:1px solid var(--border);border-radius:10px;text-decoration:none;color:var(--cream);transition:all 0.3s}.contact-link:hover{border-color:var(--cream-dim);transform:translateY(-3px);box-shadow:0 12px 40px rgba(0,0,0,0.4)}
+.contact-link{display:flex;align-items:center;gap:14px;padding:16px 20px;background:linear-gradient(135deg,rgba(35,35,35,0.5),rgba(20,20,20,0.6));backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border:1px solid rgba(255,255,255,0.06);border-top-color:rgba(255,255,255,0.1);border-radius:10px;text-decoration:none;color:var(--cream);box-shadow:0 4px 20px rgba(0,0,0,0.3),inset 0 1px 0 rgba(255,255,255,0.04);transition:all 0.3s}.contact-link:hover{border-color:rgba(255,255,255,0.15);transform:translateY(-2px);box-shadow:0 12px 40px rgba(0,0,0,0.5),inset 0 1px 0 rgba(255,255,255,0.08)}
+.contact-cta{display:flex;align-items:center;justify-content:space-between;padding:24px 28px;background:linear-gradient(135deg,rgba(35,35,35,0.5),rgba(20,20,20,0.6));backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border:1px solid rgba(255,255,255,0.06);border-top-color:rgba(255,255,255,0.1);border-radius:12px;text-decoration:none;color:var(--cream);box-shadow:0 4px 20px rgba(0,0,0,0.3),inset 0 1px 0 rgba(255,255,255,0.04);transition:all 0.3s}.contact-cta:hover{border-color:rgba(255,255,255,0.15);transform:translateY(-3px);box-shadow:0 16px 48px rgba(0,0,0,0.5),inset 0 1px 0 rgba(255,255,255,0.08)}
+.resume-overlay{position:fixed;inset:0;z-index:9999;background:rgba(0,0,0,0.8);backdrop-filter:blur(8px);display:flex;align-items:center;justify-content:center;animation:fadeUp 0.3s ease}
+.resume-modal{width:90%;max-width:800px;height:85vh;background:var(--surface);border:1px solid var(--border);border-radius:12px;display:flex;flex-direction:column;overflow:hidden}
+.resume-header{display:flex;justify-content:space-between;align-items:center;padding:14px 20px;border-bottom:1px solid var(--border)}
+.resume-dl{font-family:'DM Sans',sans-serif;font-size:12px;color:var(--cream-dim);text-decoration:none;display:inline-flex;align-items:center;gap:4px;padding:6px 14px;border:1px solid var(--border);border-radius:6px;transition:all 0.2s}.resume-dl:hover{color:var(--cream);border-color:var(--cream-dim)}
+.resume-close{background:none;border:none;color:var(--cream-dim);font-size:24px;cursor:pointer;padding:0 4px;line-height:1;transition:color 0.2s}.resume-close:hover{color:var(--cream)}
+.resume-body{flex:1;overflow:hidden}
 .exp-card{border-left:2px solid var(--border);padding:0 0 48px 32px;position:relative}.exp-card::before{content:'';position:absolute;left:-5px;top:6px;width:8px;height:8px;border-radius:50%;background:var(--cream)}
-@media(max-width:768px){.pill-nav{display:none!important}.mobile-nav{display:flex!important}.about-grid{grid-template-columns:1fr!important}.projects-grid{grid-template-columns:1fr!important}.contact-grid{grid-template-columns:1fr!important}.globe-container{display:none!important}.hero-row{flex-direction:column}}
+.music-wrap{position:fixed;bottom:20px;right:20px;z-index:998;display:flex;flex-direction:column;align-items:flex-end;gap:6px}
+.mp-hint{font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--cream-dim);letter-spacing:0.08em;padding:0 8px;animation:hintPulse 2.5s ease-in-out infinite}
+@keyframes hintPulse{0%,100%{opacity:0.5}50%{opacity:1}}
+.music-player{display:flex;align-items:center;gap:10px;padding:8px 12px 8px 8px;background:linear-gradient(135deg,rgba(40,40,40,0.55),rgba(20,20,20,0.65));backdrop-filter:blur(32px) saturate(1.6);-webkit-backdrop-filter:blur(32px) saturate(1.6);border:1px solid rgba(255,255,255,0.08);border-top-color:rgba(255,255,255,0.12);border-radius:12px;max-width:280px;box-shadow:0 8px 32px rgba(0,0,0,0.4),inset 0 1px 0 rgba(255,255,255,0.06)}
+.mp-cover{width:36px;height:36px;border-radius:6px;background:var(--surface) center/cover no-repeat;flex-shrink:0;cursor:pointer;position:relative;overflow:hidden}.mp-cover:hover .mp-play-icon{opacity:1}
+.mp-play-icon{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;background:rgba(0,0,0,0.5);opacity:0;transition:opacity 0.2s}
+.mp-info{flex:1;min-width:0;overflow:hidden}
+.mp-title{font-family:'DM Sans',sans-serif;font-size:11px;color:var(--cream);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;line-height:1.3}
+.mp-artist{font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--mid);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;line-height:1.3}
+.mp-progress{width:100%;height:2px;background:var(--border);border-radius:1px;margin-top:4px;cursor:pointer;position:relative}.mp-progress-fill{height:100%;background:var(--cream-dim);border-radius:1px;transition:width 0.3s linear}
+.mp-controls{display:flex;align-items:center;gap:2px;flex-shrink:0}
+.mp-btn{background:none;border:none;cursor:pointer;padding:4px;display:flex;align-items:center;justify-content:center;opacity:0.6;transition:opacity 0.2s}.mp-btn:hover{opacity:1}
+.mp-vol-wrap{position:absolute;bottom:100%;right:0;margin-bottom:8px;padding:8px 12px;background:rgba(24,24,24,0.9);backdrop-filter:blur(16px);border:1px solid var(--border);border-radius:8px}
+.mp-vol-slider{-webkit-appearance:none;appearance:none;width:80px;height:3px;background:var(--border);border-radius:2px;outline:none}.mp-vol-slider::-webkit-slider-thumb{-webkit-appearance:none;width:10px;height:10px;border-radius:50%;background:var(--cream);cursor:pointer}
+.preloader{position:fixed;inset:0;z-index:10000;background:var(--bg);display:flex;align-items:center;justify-content:center}
+.preloader-bar{width:120px;height:2px;background:var(--border);border-radius:1px;overflow:hidden}
+.preloader-fill{height:100%;background:linear-gradient(90deg,var(--cream-dim),var(--cream));border-radius:1px;animation:preloaderFill 2s ease-in-out forwards}
+@keyframes preloaderFill{0%{width:0}60%{width:80%}100%{width:100%}}
+.back-to-top{position:fixed;bottom:24px;left:24px;z-index:998;width:40px;height:40px;border-radius:50%;background:linear-gradient(135deg,rgba(40,40,40,0.55),rgba(20,20,20,0.65));backdrop-filter:blur(32px) saturate(1.6);-webkit-backdrop-filter:blur(32px) saturate(1.6);border:1px solid rgba(255,255,255,0.08);border-top-color:rgba(255,255,255,0.12);box-shadow:0 8px 24px rgba(0,0,0,0.4),inset 0 1px 0 rgba(255,255,255,0.06);cursor:pointer;display:flex;align-items:center;justify-content:center;transition:opacity 0.3s,transform 0.3s,background 0.3s}.back-to-top:hover{background:linear-gradient(135deg,rgba(60,60,60,0.6),rgba(30,30,30,0.7));border-color:rgba(255,255,255,0.15)}
+@media(max-width:768px){.music-wrap{bottom:12px;right:12px}.music-player{max-width:240px}.mp-cover{width:32px;height:32px}.mp-hint{display:none}.back-to-top{bottom:14px;left:14px;width:36px;height:36px}}
+@media(max-width:768px){.pill-nav{display:none!important}.mobile-nav{display:flex!important}.about-grid{grid-template-columns:1fr!important}.projects-grid{grid-template-columns:1fr!important}.contact-grid{grid-template-columns:1fr!important}.globe-container{display:none!important}.hero-row{flex-direction:column}.resume-btn{display:none!important}.date-badge{display:none!important}}
 @media(min-width:769px){.mobile-nav{display:none!important}}
 `;

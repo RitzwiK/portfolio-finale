@@ -22,12 +22,22 @@
       var pg = pc.getContext("2d");
       var particles = [];
       var NUM = 80;
+      var prevW = window.innerWidth, prevH = window.innerHeight;
       function pResize(){
         var dpr = window.devicePixelRatio || 1;
         var w = window.innerWidth, h = window.innerHeight;
         pc.width = w * dpr; pc.height = h * dpr;
         pc.style.width = w + "px"; pc.style.height = h + "px";
         pg.setTransform(dpr, 0, 0, dpr, 0, 0);
+        /* Rescale particle positions to new viewport */
+        if(prevW > 0 && prevH > 0){
+          var sx = w / prevW, sy = h / prevH;
+          for(var i = 0; i < particles.length; i++){
+            particles[i].x *= sx;
+            particles[i].y *= sy;
+          }
+        }
+        prevW = w; prevH = h;
       }
       pResize(); window.addEventListener("resize", pResize);
       for(var i=0; i<NUM; i++){
