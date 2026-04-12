@@ -1,0 +1,129 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Ritwik Kumar</title>
+    <style>* { margin: 0; padding: 0; } body { background: #0f0f0f; }</style>
+  </head>
+  <body>
+    <!-- Dark particle network background -->
+    <canvas id="particles" style="position:fixed;top:0;left:0;width:100vw;height:100vh;pointer-events:none;z-index:0;"></canvas>
+    <!-- Cursor trail -->
+    <canvas id="cursor-trail" style="position:fixed;top:0;left:0;width:100vw;height:100vh;pointer-events:none;z-index:9998;"></canvas>
+    <!-- Page transition overlay -->
+    <div id="page-fade" style="position:fixed;inset:0;background:#0f0f0f;z-index:9990;opacity:0;pointer-events:none;transition:opacity 0.4s ease;"></div>
+    <div id="root"></div>
+    <script type="module" src="/src/main.jsx"></script>
+    <script>
+    (function(){
+      /* ═══ DARK PARTICLE NETWORK ═══ */
+      var pc = document.getElementById("particles");
+      var pg = pc.getContext("2d");
+      var particles = [];
+      var NUM = 80;
+      var prevW = window.innerWidth, prevH = window.innerHeight;
+      function pResize(){
+        var dpr = window.devicePixelRatio || 1;
+        var w = window.innerWidth, h = window.innerHeight;
+        pc.width = w * dpr; pc.height = h * dpr;
+        pc.style.width = w + "px"; pc.style.height = h + "px";
+        pg.setTransform(dpr, 0, 0, dpr, 0, 0);
+        /* Rescale particle positions to new viewport */
+        if(prevW > 0 && prevH > 0){
+          var sx = w / prevW, sy = h / prevH;
+          for(var i = 0; i < particles.length; i++){
+            particles[i].x *= sx;
+            particles[i].y *= sy;
+          }
+        }
+        prevW = w; prevH = h;
+      }
+      pResize(); window.addEventListener("resize", pResize);
+      for(var i=0; i<NUM; i++){
+        particles.push({
+          x: Math.random()*window.innerWidth,
+          y: Math.random()*window.innerHeight,
+          vx: (Math.random()-0.5)*0.3,
+          vy: (Math.random()-0.5)*0.3,
+          r: Math.random()*2.5+1.5
+        });
+      }
+      function drawParticles(){
+        var w = window.innerWidth, h = window.innerHeight;
+        pg.clearRect(0,0,w,h);
+        for(var i=0; i<NUM; i++){
+          var p = particles[i];
+          p.x += p.vx; p.y += p.vy;
+          if(p.x<0) p.x=w; if(p.x>w) p.x=0;
+          if(p.y<0) p.y=h; if(p.y>h) p.y=0;
+          pg.beginPath(); pg.arc(p.x, p.y, p.r, 0, Math.PI*2);
+          pg.fillStyle = "rgba(232,228,222,0.25)"; pg.fill();
+          for(var j=i+1; j<NUM; j++){
+            var q=particles[j], dx=p.x-q.x, dy=p.y-q.y, d=Math.sqrt(dx*dx+dy*dy);
+            if(d < 200){
+              pg.beginPath(); pg.moveTo(p.x,p.y); pg.lineTo(q.x,q.y);
+              pg.strokeStyle = "rgba(232,228,222,"+(0.12*(1-d/200))+")";
+              pg.lineWidth = 0.8; pg.stroke();
+            }
+          }
+        }
+        requestAnimationFrame(drawParticles);
+      }
+      drawParticles();
+
+      /* ═══ CURSOR TRAIL ═══ */
+      var cc = document.getElementById("cursor-trail");
+      var cg = cc.getContext("2d");
+      var trail = [];
+      var maxLen = 80;
+      var moving = false;
+      var moveTimer = null;
+      function cResize(){
+        var dpr = window.devicePixelRatio || 1;
+        var w = window.innerWidth, h = window.innerHeight;
+        cc.width = w * dpr; cc.height = h * dpr;
+        cc.style.width = w + "px"; cc.style.height = h + "px";
+        cg.setTransform(dpr, 0, 0, dpr, 0, 0);
+      }
+      cResize(); window.addEventListener("resize", cResize);
+      document.addEventListener("mousemove", function(e){
+        var x = e.clientX, y = e.clientY;
+        var last = trail.length ? trail[trail.length-1] : null;
+        if(!last || Math.abs(x-last.x)>1.5 || Math.abs(y-last.y)>1.5){
+          trail.push({x:x, y:y}); if(trail.length > maxLen) trail.shift();
+        }
+        moving = true; clearTimeout(moveTimer);
+        moveTimer = setTimeout(function(){ moving = false; }, 60);
+        if(x<6||x>window.innerWidth-6||y<6||y>window.innerHeight-6)
+          trail.splice(0, Math.min(10, trail.length));
+      });
+      function drawTrail(){
+        cg.clearRect(0, 0, window.innerWidth, window.innerHeight);
+        if(trail.length > 2) trail.splice(0, moving ? 1 : 3);
+        if(trail.length > 1){
+          var n = trail.length;
+          for(var i = 0; i < n - 1; i++){
+            var t = (i+1)/(n-1), a = trail[i], b = trail[i+1];
+            cg.beginPath(); cg.moveTo(a.x, a.y); cg.lineTo(b.x, b.y);
+            cg.strokeStyle = "rgba(255,255,255," + (0.1+t*0.75) + ")";
+            cg.lineWidth = 0.5 + t*3.5; cg.lineCap = "round"; cg.stroke();
+          }
+        }
+        requestAnimationFrame(drawTrail);
+      }
+      drawTrail();
+
+      /* ═══ PAGE TRANSITION HELPER ═══ */
+      window._pageFade = function(callback){
+        var el = document.getElementById("page-fade");
+        el.style.opacity = "1"; el.style.pointerEvents = "all";
+        setTimeout(function(){
+          callback();
+          setTimeout(function(){ el.style.opacity = "0"; el.style.pointerEvents = "none"; }, 50);
+        }, 400);
+      };
+    })();
+    </script>
+  </body>
+</html>
