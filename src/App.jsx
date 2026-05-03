@@ -4,26 +4,29 @@ import * as THREE from "three";
 /* ═══════════════════════════════════════════════
    PHOTO — Replace with your image URL or base64
    ═══════════════════════════════════════════════ */
-const PHOTO_URL = "data:image/jpeg;base64,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";
-
+const PHOTO_URL = "public/me.png";
 /* ── PROJECT DATA ── */
 const PROJECTS = [
   { id:"f1", num:"01", title:"F1 Analysis & Predictions", subtitle:"Data Science • Dashboard", period:"Jul – Nov 2025",
-    cover:"/projects/f1-cover.png", coverGradient:null, images:["/projects/f1-1.png", "/projects/f1-2.png" , "/projects/f1-3.png", "/projects/f1-4.png" , "/projects/f1-5.png", "/projects/f1-6.png" , "/projects/f1-7.png", "/projects/f1-8.png" ,"/projects/f1-9.png", "/projects/f1-10.png" , "/projects/f1-11.png"], link:"https://f1-eda.streamlit.app/",
+    cover:"/projects/f1-cover.png", coverGradient:null, images:["/projects/f1-1.png","/projects/f1-2.png","/projects/f1-3.png","/projects/f1-4.png","/projects/f1-5.png","/projects/f1-6.png","/projects/f1-7.png","/projects/f1-8.png","/projects/f1-9.png","/projects/f1-10.png","/projects/f1-11.png"], link:null,
     desc:"Ingested 45+ years of F1 race data with automated ETL pipelines. Built Lasso Regression models achieving R² > 0.85 for championship forecasting.",
     stack:["Python","Pandas","Scikit-Learn","Lasso Regression","Clustering","Streamlit","Jupyter"],
     longDesc:"This project involved processing and analyzing over four decades of Formula 1 racing data. Using automated pandas ETL pipelines with modular feature engineering, the data was cleaned and made ready for predictive modeling. Lasso Regression was applied to forecast championship standings with high accuracy. K-means clustering identified performance patterns across different circuit types and weather conditions. The final deliverable was a full interactive Streamlit web application." },
   { id:"fuelsense", num:"02", title:"FuelSense", subtitle:"Analytics • Geospatial", period:"Dec 2024 – May 2025",
-    cover:"/projects/fs-cover.png", coverGradient: null, images:["/projects/fs-cover.png", "/projects/fs-1.png", "/projects/fs-2.jpg", "/projects/fs-3.png", "/projects/fs-4.png", "/projects/fs-5.png" ], link:"https://fuelsense.streamlit.app",
+    cover:"/projects/fs-cover.png", coverGradient:null, images:["/projects/fs-1.png","/projects/fs-2.jpg","/projects/fs-3.png","/projects/fs-4.png","/projects/fs-5.png"], link:"https://fuelsense.streamlit.app",
     desc:"Analyzed fuel consumption across vehicle categories with geospatial mapping and regional clustering.",
     stack:["Python","Matplotlib","Scikit-Learn","Geospatial Analysis","Streamlit"],
     longDesc:"FuelSense processes fuel-consumption-per-kilometer data across diverse vehicle categories and geographic regions. Regional clustering and geospatial mapping uncover consumption pattern differences at scale. The deployed Streamlit dashboard provides dynamic charts, geospatial visualizations, and region-wise comparison tools." },
-  { id:"acrs", num:"03", title:"ACRS — Automated Code Review System", subtitle:"GNN • Full-Stack", period:"2024 – 2025",
-    cover:"/projects/acrs-cover.png", coverGradient:null, images:["/projects/acrs-1.png" , "/projects/acrs-2.png" , "/projects/acrs-3.png" , "/projects/acrs-4.png" , "/projects/acrs-5.png" , "/projects/acrs-6.png" , "/projects/acrs-7.png" , "/projects/acrs-8.png" ,], link:"https://acrscan.vercel.app",
+  { id:"acrs", num:"03", title:"ACRS — Automated Code Review", subtitle:"GNN • Full-Stack", period:"2024 – 2025",
+    cover:"/projects/acrs-cover.png", coverGradient:null, images:["/projects/acrs-1.png","/projects/acrs-2.png","/projects/acrs-3.png","/projects/acrs-4.png","/projects/acrs-5.png","/projects/acrs-6.png","/projects/acrs-7.png","/projects/acrs-8.png"], link:"https://acrscan.vercel.app",
     desc:"GNN-based code review platform using a custom Graph Attention Network built from scratch in NumPy.",
     stack:["Python","NumPy","Flask","React","D3.js","Vite","Vercel","Render"],
     longDesc:"ACRS is a GNN-based code review platform. The system uses a custom Graph Attention Network (GAT) implemented entirely from scratch in NumPy, parsing source code into unified program graphs combining AST, CFG, and DFG. Backend on Flask/Render, frontend on React/D3.js/Vercel." },
-    
+  { id:"anchor", num:"04", title:"Anchor", subtitle:"GenAI • Causal ML", period:"2026",
+    cover:"/projects/anchor-cover.jpg", coverGradient:null, images:["/projects/anchor-1.jpg","/projects/anchor-2.jpg","/projects/anchor-3.jpg","/projects/anchor-4.jpg",,"/projects/anchor-5.jpg",,"/projects/anchor-6.jpg",,"/projects/anchor-7.jpg"], link:null,
+    desc:"Causal Prompt Anchoring system that grounds LLM outputs in discovered root causes, verified by a novel CGR metric.",
+    stack:["Python","FastAPI","React","Vite","STL","Isolation Forest","Granger Causality","PC Algorithm"],
+    longDesc:"Full-stack research project for the Generative AI in Business Use Cases course. The FastAPI backend runs STL decomposition, Isolation Forest anomaly detection, PC algorithm + Granger causality for causal discovery, and backward root-cause tracing. LLM generation is constrained by Causal Prompt Anchoring (CPA), and outputs are verified against a novel CGR (Causal Grounding Ratio) metric. React/Vite frontend with a black-and-white Apple-inspired design. Co-authors: Janmay, Shubhang Gandevia, Aryan Nair." },
 ];
 const SKILLS_ROW1 = ["Python","TensorFlow","PyTorch","Scikit-Learn","Pandas","NumPy","Streamlit","FastAPI","Docker","Git","Kafka","SQL","Python","TensorFlow","PyTorch","Scikit-Learn","Pandas","NumPy","Streamlit","FastAPI","Docker","Git","Kafka","SQL"];
 const SKILLS_ROW2 = ["CNNs","RNNs","Transformers","NLP","XGBoost","LightGBM","Clustering","Time-Series","Spark","Hadoop","MLOps","REST APIs","CNNs","RNNs","Transformers","NLP","XGBoost","LightGBM","Clustering","Time-Series","Spark","Hadoop","MLOps","REST APIs"];
@@ -43,34 +46,132 @@ const IC = {
   ext:<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>,
 };
 
-/* ── Scroll Reveal ── */
+/* ══════════════════════════════════════════════
+   SCROLL REVEAL & MOTION HOOKS
+   ══════════════════════════════════════════════ */
 function useReveal(t=0.12){const r=useRef(null);const[v,s]=useState(false);useEffect(()=>{const e=r.current;if(!e)return;const o=new IntersectionObserver(([x])=>{if(x.isIntersecting){s(true);o.unobserve(e)}},{threshold:t,rootMargin:"0px 0px -40px 0px"});o.observe(e);return()=>o.disconnect()},[]);return[r,v]}
-function Reveal({children,delay=0,style={}}){const[r,v]=useReveal();return<div ref={r} style={{...style,opacity:v?1:0,transform:v?"translateY(0)":"translateY(50px)",transition:`opacity 0.8s cubic-bezier(0.16,1,0.3,1) ${delay}s, transform 0.8s cubic-bezier(0.16,1,0.3,1) ${delay}s`}}>{children}</div>}
-function RevealLeft({children,delay=0,style={}}){const[r,v]=useReveal();return<div ref={r} style={{...style,opacity:v?1:0,transform:v?"translateX(0)":"translateX(-80px)",transition:`opacity 0.9s cubic-bezier(0.16,1,0.3,1) ${delay}s, transform 0.9s cubic-bezier(0.16,1,0.3,1) ${delay}s`}}>{children}</div>}
-function RevealRight({children,delay=0,style={}}){const[r,v]=useReveal();return<div ref={r} style={{...style,opacity:v?1:0,transform:v?"translateX(0)":"translateX(80px)",transition:`opacity 0.9s cubic-bezier(0.16,1,0.3,1) ${delay}s, transform 0.9s cubic-bezier(0.16,1,0.3,1) ${delay}s`}}>{children}</div>}
 
-/* ── Animated Counter ── */
-function AnimCount({end,decimals=0,duration=2000}){
-  const[ref,vis]=useReveal(0.3);const[val,setVal]=useState(0);const started=useRef(false);
-  useEffect(()=>{if(!vis||started.current)return;started.current=true;const t0=Date.now();
-    const tick=()=>{const p=Math.min((Date.now()-t0)/duration,1);setVal((1-Math.pow(1-p,3))*end);if(p<1)requestAnimationFrame(tick);else setVal(end)};requestAnimationFrame(tick)},[vis]);
-  return<div ref={ref}><div style={{fontFamily:"'Bebas Neue'",fontSize:"46px",color:"var(--cream)"}}>{decimals>0?val.toFixed(decimals):Math.round(val)}</div></div>;
+function Reveal({children,delay=0,y=60,style={}}){const[r,v]=useReveal();return<div ref={r} style={{...style,opacity:v?1:0,transform:v?"translateY(0)":`translateY(${y}px)`,transition:`opacity 0.9s cubic-bezier(0.22,1,0.36,1) ${delay}s, transform 0.9s cubic-bezier(0.22,1,0.36,1) ${delay}s`,willChange:"opacity,transform"}}>{children}</div>}
+function RevealLeft({children,delay=0,style={}}){const[r,v]=useReveal();return<div ref={r} style={{...style,opacity:v?1:0,transform:v?"translateX(0)":"translateX(-80px)",transition:`opacity 1s cubic-bezier(0.22,1,0.36,1) ${delay}s, transform 1s cubic-bezier(0.22,1,0.36,1) ${delay}s`,willChange:"opacity,transform"}}>{children}</div>}
+function RevealRight({children,delay=0,style={}}){const[r,v]=useReveal();return<div ref={r} style={{...style,opacity:v?1:0,transform:v?"translateX(0)":"translateX(80px)",transition:`opacity 1s cubic-bezier(0.22,1,0.36,1) ${delay}s, transform 1s cubic-bezier(0.22,1,0.36,1) ${delay}s`,willChange:"opacity,transform"}}>{children}</div>}
+
+/* Magnetic wrapper - element gently follows the cursor */
+function Magnetic({children,strength=0.25,className="",style={}}){
+  const ref=useRef(null);
+  const reset=()=>{const el=ref.current;if(el)el.style.transform=""};
+  const move=(e)=>{
+    const el=ref.current;if(!el)return;
+    const r=el.getBoundingClientRect();
+    const mx=e.clientX-r.left-r.width/2;
+    const my=e.clientY-r.top-r.height/2;
+    el.style.transform=`translate(${mx*strength}px, ${my*strength}px)`;
+  };
+  return <div ref={ref} className={`mag ${className}`} style={{...style,transition:"transform 0.45s cubic-bezier(0.22,1,0.36,1)",display:"inline-flex"}} onMouseMove={move} onMouseLeave={reset}>{children}</div>;
 }
 
-/* ── Tilt Card ── */
+/* Smooth counter - supports a starting value so "2027" doesn't count from 0 */
+function AnimCount({end,decimals=0,duration=1800,start=0,suffix=""}){
+  const[ref,vis]=useReveal(0.3);const[val,setVal]=useState(start);const started=useRef(false);
+  useEffect(()=>{if(!vis||started.current)return;started.current=true;const t0=Date.now();
+    const tick=()=>{const p=Math.min((Date.now()-t0)/duration,1);const e=1-Math.pow(1-p,4);setVal(start+e*(end-start));if(p<1)requestAnimationFrame(tick);else setVal(end)};requestAnimationFrame(tick)},[vis]);
+  return<div ref={ref}><div className="count-num">{decimals>0?val.toFixed(decimals):Math.round(val)}{suffix}</div></div>;
+}
+
+/* Tilt card (kept for future use) */
 function TiltCard({children,className="",onClick,style={}}){
   const ref=useRef(null);
-  const handleMove=(e)=>{const el=ref.current;if(!el)return;const r=el.getBoundingClientRect();const x=(e.clientX-r.left)/r.width-0.5;const y=(e.clientY-r.top)/r.height-0.5;el.style.transform=`perspective(800px) rotateY(${x*8}deg) rotateX(${-y*8}deg) translateY(-8px)`};
+  const handleMove=(e)=>{const el=ref.current;if(!el)return;const r=el.getBoundingClientRect();const x=(e.clientX-r.left)/r.width-0.5;const y=(e.clientY-r.top)/r.height-0.5;el.style.transform=`perspective(1200px) rotateY(${x*6}deg) rotateX(${-y*6}deg) translateY(-6px)`};
   const handleLeave=()=>{const el=ref.current;if(el)el.style.transform=""};
-  return<div ref={ref} className={className} onClick={onClick} style={{...style,transition:"transform 0.4s cubic-bezier(0.16,1,0.3,1),border-color 0.4s,box-shadow 0.4s"}} onMouseMove={handleMove} onMouseLeave={handleLeave}>{children}</div>;
+  return<div ref={ref} className={className} onClick={onClick} style={{...style,transition:"transform 0.5s cubic-bezier(0.22,1,0.36,1),border-color 0.4s,box-shadow 0.4s"}} onMouseMove={handleMove} onMouseLeave={handleLeave}>{children}</div>;
 }
 
 /* ══════════════════════════════════════════════
-   MUSIC PLAYER — bottom-right mini player
+   STACK CARD — sticky-stacking project tile
+   Each card sticks at a slightly-incrementing top offset.
+   As the NEXT card approaches its pin position, this card
+   scales, dims, and blurs - giving a real depth stack feel.
    ══════════════════════════════════════════════ */
+function StackCard({project:p, index:i, total, onClick}){
+  const wrapRef = useRef(null);
+  const [prog, setProg] = useState(0);
+
+  useEffect(()=>{
+    let raf;
+    const tick = ()=>{
+      if (i < total - 1) {
+        const nextEl = document.getElementById(`proj-wrap-${i+1}`);
+        if (nextEl) {
+          const nextRect = nextEl.getBoundingClientRect();
+          const nextStickyTop = 100 + (i+1) * 10;
+          const d = nextRect.top - nextStickyTop;
+          const vh = window.innerHeight;
+          const p = 1 - Math.max(0, Math.min(1, d / (vh*0.85)));
+          setProg(p);
+        }
+      }
+      raf = requestAnimationFrame(tick);
+    };
+    raf = requestAnimationFrame(tick);
+    return ()=>cancelAnimationFrame(raf);
+  }, [i, total]);
+
+  const flipped = i % 2 === 1;
+  const scale = 1 - prog * 0.06;
+  const opacity = 1 - prog * 0.55;
+  const blur = prog * 4;
+  const translateY = prog * -30;
+
+  return (
+    <div ref={wrapRef} id={`proj-wrap-${i}`} className="stack-wrap" style={{
+      position: "sticky",
+      top: `${100 + i * 10}px`,
+      marginBottom: "10vh",
+      zIndex: i + 1
+    }}>
+      <div className="stack-card" style={{
+        transform: `scale(${scale}) translateY(${translateY}px)`,
+        opacity,
+        filter: blur>0.15?`blur(${blur}px)`:"none",
+      }}>
+        <div className={`stack-inner ${flipped?"flipped":""}`} onClick={onClick}>
+          <div className="stack-media">
+            {p.cover ? <img src={p.cover} alt={p.title}/> : <div className="stack-media-blank"><span>{p.num}</span></div>}
+            <div className="stack-media-grad"/>
+          </div>
+          <div className="stack-body">
+            <div className="stack-top-row">
+              <div className="stack-num">/ {p.num}</div>
+              <div className="stack-period">{p.period}</div>
+            </div>
+            <div className="stack-tag">{p.subtitle}</div>
+            <h3 className="stack-title">{p.title}</h3>
+            <p className="stack-desc">{p.desc}</p>
+            <div className="stack-chips">{p.stack.slice(0,6).map(t=><span key={t} className="stack-chip">{t}</span>)}</div>
+            <div className="stack-cta">
+              <span>View case study</span>
+              <span className="stack-arrow">↗</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+/* ══════════════════════════════════════════════
+   MUSIC PLAYER — bottom-right mini player (unchanged logic)
+   ══════════════════════════════════════════════ */
+/* PLAYLIST — replace the title and artist fields below with your actual song info.
+   File paths match your public/music/ and public/covers/ folders. */
 const PLAYLIST = [
-  /* Local: */ { title:"Song Name", artist:"Artist", src:"/music/track1.mp3", cover:"/music/cover1.jpg" },
-  /* Online: { title:"Chill Beat", artist:"Prod. Name", src:"https://your-link.com/song.mp3", cover:"https://your-link.com/cover.jpg" }, */
+  { title:"Good Morning", artist:"Kanye West", src:"/music/track1-gm.mp3",   cover:"/music/cover1.png" },
+  { title:"Drive Slow", artist:"Kanye West", src:"/music/track2-ds.mp3",   cover:"/music/cover2.jpg" },
+  { title:"Devil in a New Dress", artist:"Kanye West", src:"/music/track3-diand.mp3", cover:"/music/cover3.jpg" },
+  { title:"One of Wun", artist:"Gunna", src:"/music/track4-oow.mp3",  cover:"/music/cover4.jpg" },
+  { title:"Over My Dead Body", artist:"Drake", src:"/music/track5-omdb.mp3", cover:"/music/cover5.jpg" },
+  { title:"Japan", artist:"Famous Dex", src:"/music/track6-j.mp3",    cover:"/music/cover6.jpg" },
+  { title:"Too Many Nights", artist:"Metro Boomin", src:"/music/track7-tmn.mp3",  cover:"/music/cover7.jpg" },
+  { title:"Stories About My Brother", artist:"Drake", src:"/music/track8-samb.mp3", cover:"/music/cover8.jpg" },
 ];
 
 function MusicPlayer(){
@@ -114,26 +215,21 @@ function MusicPlayer(){
       {!playing&&<div className="mp-hint">▶ press play</div>}
       <div className="music-player">
       <audio ref={audioRef} preload="metadata"/>
-      {/* Cover art */}
       <div className="mp-cover" style={{backgroundImage:`url(${song.cover})`}} onClick={toggle}>
         <div className="mp-play-icon">{playing?<svg width="10" height="10" viewBox="0 0 24 24" fill="var(--cream)"><rect x="5" y="4" width="4" height="16"/><rect x="15" y="4" width="4" height="16"/></svg>:<svg width="10" height="10" viewBox="0 0 24 24" fill="var(--cream)"><polygon points="6,4 20,12 6,20"/></svg>}</div>
       </div>
-      {/* Info */}
       <div className="mp-info">
         <div className="mp-title">{song.title}</div>
         <div className="mp-artist">{song.artist}</div>
-        {/* Progress bar */}
         <div className="mp-progress" onClick={(e)=>{const a=audioRef.current;if(!a||!a.duration)return;const r=e.currentTarget.getBoundingClientRect();a.currentTime=(e.clientX-r.left)/r.width*a.duration}}>
           <div className="mp-progress-fill" style={{width:`${progress*100}%`}}/>
         </div>
       </div>
-      {/* Controls */}
       <div className="mp-controls">
         <button className="mp-btn" onClick={toggle}>{playing?<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--cream)" strokeWidth="2"><rect x="6" y="4" width="4" height="16"/><rect x="14" y="4" width="4" height="16"/></svg>:<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--cream)" strokeWidth="2"><polygon points="6,4 20,12 6,20"/></svg>}</button>
         {PLAYLIST.length>1&&<button className="mp-btn" onClick={next}><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="var(--cream)" strokeWidth="2"><polygon points="5,4 15,12 5,20"/><line x1="19" y1="5" x2="19" y2="19"/></svg></button>}
         <button className="mp-btn" onClick={()=>setShowVol(!showVol)} style={{position:"relative"}}><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="var(--cream)" strokeWidth="2"><polygon points="11,5 6,9 2,9 2,15 6,15 11,19"/><path d="M15.54 8.46a5 5 0 0 1 0 7.07"/></svg></button>
       </div>
-      {/* Volume slider */}
       {showVol&&<div className="mp-vol-wrap"><input type="range" min="0" max="1" step="0.01" value={vol} onChange={e=>setVol(parseFloat(e.target.value))} className="mp-vol-slider"/></div>}
     </div>
     </div>
@@ -141,7 +237,7 @@ function MusicPlayer(){
 }
 
 /* ══════════════════════════════════════════════
-   3D DARK GLOBE — Three.js dot-matrix sphere
+   3D DARK GLOBE — Three.js (kept)
    ══════════════════════════════════════════════ */
 function DarkGlobe(){
   const mountRef=useRef(null);
@@ -149,14 +245,15 @@ function DarkGlobe(){
     const el=mountRef.current;if(!el)return;
     const W=el.clientWidth||450,H=el.clientHeight||450;
     const scene=new THREE.Scene();
-    const camera=new THREE.PerspectiveCamera(45,W/H,0.1,1000);
-    camera.position.z=2.8;
+    /* Wider FOV + farther camera so the moon and its orbit ring stay inside the view */
+    /* Wider FOV + farther camera so the moon and its orbit ring stay inside the view at all aspect ratios */
+    const camera=new THREE.PerspectiveCamera(50,W/H,0.1,1000);
+    camera.position.z=3.6;
     const renderer=new THREE.WebGLRenderer({alpha:true,antialias:true});
     renderer.setSize(W,H);renderer.setPixelRatio(window.devicePixelRatio);renderer.setClearColor(0x000000,0);
     el.appendChild(renderer.domElement);
     const group=new THREE.Group();scene.add(group);
-    /* ── Earth texture: put image at /public/earth-bw.jpg and set useTexture=true ── */
-    const useTexture = true; /* ← set false for dot-matrix, true for Earth texture */
+    const useTexture = true;
 
     const sphereGeo=new THREE.SphereGeometry(1,64,64);
     let sphereMat;
@@ -164,16 +261,12 @@ function DarkGlobe(){
       const tex=new THREE.TextureLoader().load("/earth-bw.jpg");
       sphereMat=new THREE.MeshBasicMaterial({map:tex});
       group.add(new THREE.Mesh(sphereGeo,sphereMat));
-      /* Subtle wireframe on top of textured globe */
       const wireGeo=new THREE.SphereGeometry(1.003,36,24);
       group.add(new THREE.Mesh(wireGeo,new THREE.MeshBasicMaterial({color:0xcccccc,wireframe:true,transparent:true,opacity:0.08})));
     }else{
-      /* Dark solid sphere */
       sphereMat=new THREE.MeshPhongMaterial({color:0x111115,emissive:0x060608,specular:0x222222,shininess:20});
       group.add(new THREE.Mesh(sphereGeo,sphereMat));
-      /* Wireframe grid */
       group.add(new THREE.Mesh(new THREE.SphereGeometry(1.002,36,24),new THREE.MeshBasicMaterial({color:0xe8e4de,wireframe:true,transparent:true,opacity:0.06})));
-      /* Dot-matrix surface */
       const N=1400;const pos=new Float32Array(N*3);const sizes=new Float32Array(N);const phi0=(1+Math.sqrt(5))/2;
       for(let i=0;i<N;i++){
         const th=2*Math.PI*i/phi0;const ph=Math.acos(1-2*(i+0.5)/N);const r=1.005;
@@ -192,16 +285,58 @@ function DarkGlobe(){
       group.add(new THREE.Points(dotGeo,dotMat));
     }
 
-    /* Atmosphere glow */
     const glow=new THREE.Mesh(new THREE.RingGeometry(1.02,1.08,64),new THREE.MeshBasicMaterial({color:0x8899aa,transparent:true,opacity:0.05,side:THREE.DoubleSide}));
     glow.lookAt(camera.position);scene.add(glow);
-    /* Lighting */
+
+    /* ─── MOON + ORBIT ─── */
+    /* Tighter orbit so the moon never gets clipped at extreme scales / corner viewports */
+    const MOON_ORBIT_R = 1.32;
+    const moonSystem = new THREE.Group();
+    /* Tilt the orbital plane so the ring and moon are both visibly 3D */
+    moonSystem.rotation.x = 0.35;
+    moonSystem.rotation.z = 0.12;
+    scene.add(moonSystem);
+
+    /* Orbit ring (thin circle) */
+    const orbitGeo = new THREE.RingGeometry(MOON_ORBIT_R - 0.006, MOON_ORBIT_R + 0.006, 180);
+    const orbitMat = new THREE.MeshBasicMaterial({color:0xc8c6c0, transparent:true, opacity:0.14, side:THREE.DoubleSide});
+    const orbitRing = new THREE.Mesh(orbitGeo, orbitMat);
+    orbitRing.rotation.x = Math.PI / 2; /* lay ring flat in moonSystem local XZ plane */
+    moonSystem.add(orbitRing);
+
+    /* Moon — uses the SAME earth-bw texture wrap technique as the earth above, so the moon
+       reads as a sibling object in the same visual language. The earth-bw map's contrast also
+       happens to look genuinely lunar (bright continents = bright lunar highlands, dark oceans
+       = darker lunar maria) when desaturated and slightly inverted-feeling. */
+    const moonGroup = new THREE.Group();
+    moonSystem.add(moonGroup);
+
+    const moonRadius = 0.20;
+    const moonTex = new THREE.TextureLoader().load("/moon.jpg");
+    const moonBaseMat = new THREE.MeshBasicMaterial({map: moonTex});
+    const moonSphere = new THREE.Mesh(new THREE.SphereGeometry(moonRadius, 48, 48), moonBaseMat);
+    moonGroup.add(moonSphere);
+
+    /* Wireframe overlay — same aesthetic as the earth's grid */
+    const moonWire = new THREE.Mesh(
+      new THREE.SphereGeometry(moonRadius * 1.003, 24, 16),
+      new THREE.MeshBasicMaterial({color:0xcccccc, wireframe:true, transparent:true, opacity:0.10})
+    );
+    moonGroup.add(moonWire);
+
+    /* Subtle moon glow */
+    const moonGlow = new THREE.Mesh(
+      new THREE.SphereGeometry(moonRadius * 1.25, 24, 24),
+      new THREE.MeshBasicMaterial({color:0xe8e4de, transparent:true, opacity:0.06})
+    );
+    moonSystem.add(moonGlow);
+
     const key=new THREE.DirectionalLight(0xdedcd6,1.0);key.position.set(2,1,3);scene.add(key);
     const rim=new THREE.DirectionalLight(0x4466aa,0.4);rim.position.set(-3,0,-1);scene.add(rim);
     scene.add(new THREE.AmbientLight(0x222222,0.4));
     group.rotation.x=0.4;group.rotation.z=-0.1;
-    /* Drag to rotate */
     let dragging=false,dragX=0,dragY=0,rotVx=0,rotVy=0.003;
+    let moonAngle = 0;
     const onDown=(e)=>{dragging=true;dragX=e.clientX||e.touches?.[0]?.clientX||0;dragY=e.clientY||e.touches?.[0]?.clientY||0;el.style.cursor="grabbing"};
     const onUp=()=>{dragging=false;el.style.cursor="grab"};
     const onDrag=(e)=>{
@@ -218,8 +353,18 @@ function DarkGlobe(){
     let aid;
     const anim=()=>{
       aid=requestAnimationFrame(anim);
-      if(!dragging){rotVy+=(0.003-rotVy)*0.02;rotVx*=0.95}/* ease back to auto-rotate */
+      if(!dragging){rotVy+=(0.003-rotVy)*0.02;rotVx*=0.95}
       group.rotation.y+=rotVy;group.rotation.x+=rotVx;
+
+      /* Moon orbits the earth in its own tilted plane, independent of earth's rotation.
+         Moon also spins slowly on its own axis so the texture's features rotate through view. */
+      moonAngle += 0.0045;
+      const mx = Math.cos(moonAngle) * MOON_ORBIT_R;
+      const mz = Math.sin(moonAngle) * MOON_ORBIT_R;
+      moonGroup.position.set(mx, 0, mz);
+      moonGlow.position.set(mx, 0, mz);
+      moonGroup.rotation.y += 0.004;
+
       renderer.render(scene,camera);
     };
     anim();
@@ -233,274 +378,859 @@ function DarkGlobe(){
 /* ── IST Clock ── */
 function useClock(){const[t,s]=useState("");useEffect(()=>{const tick=()=>{const d=new Date();const ist=new Date(d.getTime()+(5.5*60*60*1000)+(d.getTimezoneOffset()*60*1000));const h=ist.getHours();s(`${h%12||12}:${String(ist.getMinutes()).padStart(2,"0")} ${h>=12?"PM":"AM"} IST`)};tick();const id=setInterval(tick,10000);return()=>clearInterval(id)},[]);return t}
 
-function useDate(){const[d,setD]=useState("");useEffect(()=>{const tick=()=>{const now=new Date();const ist=new Date(now.getTime()+(5.5*60*60*1000)+(now.getTimezoneOffset()*60*1000));const day=ist.getDate();const suf=day%10===1&&day!==11?"st":day%10===2&&day!==12?"nd":day%10===3&&day!==13?"rd":"th";const months=["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];const days=["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"];setD(`${day}${suf} ${months[ist.getMonth()]} ${ist.getFullYear()}, ${days[ist.getDay()]}`)};tick();const id=setInterval(tick,60000);return()=>clearInterval(id)},[]);return d}
-
-/* ── Project Detail ── */
-function ProjectDetail({project:p,onBack}){
+/* ══════════════════════════════════════════════
+   PROJECT DETAIL (polished)
+   ══════════════════════════════════════════════ */
+function ProjectDetail({project:p, onBack}){
   useEffect(()=>{window.scrollTo(0,0)},[]);
-  return(<div style={{minHeight:"100vh",background:"var(--bg)",color:"var(--cream)",padding:"120px 40px 80px"}}><div style={{maxWidth:"1000px",margin:"0 auto"}}>
-    <button onClick={onBack} style={{display:"flex",alignItems:"center",gap:"8px",background:"none",border:"none",color:"var(--cream-dim)",cursor:"pointer",fontFamily:"'DM Sans'",fontSize:"14px",marginBottom:"48px",transition:"color 0.3s"}} onMouseEnter={e=>e.currentTarget.style.color="var(--cream)"} onMouseLeave={e=>e.currentTarget.style.color="var(--cream-dim)"}>{IC.back} Back to projects</button>
-    <div style={{marginBottom:"16px"}}><span style={{fontFamily:"'JetBrains Mono',monospace",fontSize:"12px",color:"var(--cream-dim)",letterSpacing:"0.15em"}}>{p.subtitle} • {p.period}</span></div>
-    <h1 style={{fontFamily:"'Bebas Neue'",fontSize:"clamp(48px,8vw,96px)",lineHeight:0.95,marginBottom:"40px"}}>{p.title}</h1>
-    <div style={{width:"100%",aspectRatio:"16/9",borderRadius:"16px",overflow:"hidden",marginBottom:"48px",border:"1px solid var(--border)",background:p.cover?`url(${p.cover}) center/cover`:p.coverGradient}}>
-      {p.cover?<img src={p.cover} alt={p.title} style={{width:"100%",height:"100%",objectFit:"cover"}}/>:<div style={{width:"100%",height:"100%",display:"flex",alignItems:"center",justifyContent:"center",fontFamily:"'Bebas Neue'",fontSize:"24px",color:"rgba(255,255,255,0.3)"}}>Add project screenshot here</div>}
-    </div>
-    <div style={{display:"grid",gridTemplateColumns:"1fr 280px",gap:"60px",marginBottom:"60px"}}>
-      <div><h3 style={{fontFamily:"'Bebas Neue'",fontSize:"28px",marginBottom:"16px"}}>Overview</h3><p style={{fontSize:"16px",color:"var(--cream-dim)",lineHeight:1.8}}>{p.longDesc}</p></div>
-      <div><h4 style={{fontFamily:"'Bebas Neue'",fontSize:"20px",marginBottom:"12px"}}>Stack</h4>
-        <div style={{display:"flex",flexWrap:"wrap",gap:"6px",marginBottom:"24px"}}>{p.stack.map(t=><span key={t} style={{display:"inline-block",padding:"5px 14px",border:"1px solid var(--border)",borderRadius:"4px",fontFamily:"'JetBrains Mono',monospace",fontSize:"12px",color:"var(--cream-dim)"}}>{t}</span>)}</div>
-        {p.link&&<a href={p.link} target="_blank" rel="noopener noreferrer" style={{display:"inline-flex",alignItems:"center",gap:"8px",padding:"12px 24px",background:"var(--cream)",color:"var(--dark)",borderRadius:"8px",textDecoration:"none",fontFamily:"'DM Sans'",fontSize:"14px",fontWeight:600,transition:"transform 0.2s"}} onMouseEnter={e=>e.currentTarget.style.transform="translateY(-2px)"} onMouseLeave={e=>e.currentTarget.style.transform=""}>Live Site {IC.ext}</a>}
+  return (
+    <div className="project-detail">
+      <div className="pd-inner">
+        <button onClick={onBack} className="pd-back">{IC.back} Back to work</button>
+        <div className="pd-meta"><span>{p.subtitle}</span><span className="pd-sep">/</span><span>{p.period}</span></div>
+        <h1 className="pd-title">{p.title}</h1>
+        <div className="pd-hero">
+          {p.cover ? <img src={p.cover} alt={p.title}/> : <div className="pd-hero-blank">Add cover</div>}
+        </div>
+        <div className="pd-grid">
+          <div>
+            <h3 className="pd-sec-head">Overview</h3>
+            <p className="pd-prose">{p.longDesc}</p>
+          </div>
+          <div>
+            <h4 className="pd-sec-head pd-small">Stack</h4>
+            <div className="pd-chips">{p.stack.map(t=><span key={t} className="pd-chip">{t}</span>)}</div>
+            {p.link && <Magnetic strength={0.15}><a href={p.link} target="_blank" rel="noopener noreferrer" className="pd-link">Live Site {IC.ext}</a></Magnetic>}
+          </div>
+        </div>
+        {p.images.length>0 ? <div>
+          <h3 className="pd-sec-head">Gallery</h3>
+          <div className="pd-gallery">{p.images.map((img,i)=><div key={i} className="pd-shot"><img src={img} alt={`${p.title} ${i+1}`}/></div>)}</div>
+        </div> : <div className="pd-empty"><p>Add screenshots to the PROJECTS data</p></div>}
       </div>
     </div>
-    {p.images.length>0?<div><h3 style={{fontFamily:"'Bebas Neue'",fontSize:"28px",marginBottom:"24px"}}>Gallery</h3><div style={{display:"flex",flexDirection:"column",gap:"24px"}}>{p.images.map((img,i)=><div key={i} style={{width:"100%",borderRadius:"12px",overflow:"hidden",border:"1px solid var(--border)"}}><img src={img} alt={`${p.title} ${i+1}`} style={{width:"100%",display:"block"}}/></div>)}</div></div>
-    :<div style={{padding:"60px",border:"1px dashed var(--border)",borderRadius:"12px",textAlign:"center",color:"var(--mid)"}}><p style={{fontFamily:"'JetBrains Mono',monospace",fontSize:"13px"}}>Add screenshots to the "images" array in PROJECTS data</p></div>}
-  </div></div>);
+  );
+}
+
+/* ══════════════════════════════════════════════
+   MOBILE MENU & RESUME MODAL — extracted
+   ══════════════════════════════════════════════ */
+function MobileMenu({go, setShowResume, setMenuOpen}){
+  return <div className="mobile-overlay">
+    {["about","skills","projects","experience","contact"].map((s,i)=>
+      <button key={s} onClick={()=>go(s)} className="mobile-link" style={{animationDelay:`${i*0.05}s`}}>{s}</button>
+    )}
+    <button onClick={()=>{setShowResume(true); setMenuOpen(false)}} className="mobile-link" style={{animationDelay:"0.3s"}}>Resume</button>
+  </div>
+}
+
+function ResumeModal({onClose}){
+  return <div className="resume-overlay" onClick={(e)=>{if(e.target===e.currentTarget)onClose()}}>
+    <div className="resume-modal">
+      <div className="resume-header">
+        <span className="resume-title">Resume / <em>Ritwik Kumar</em></span>
+        <div className="resume-actions">
+          <a href="/resume.pdf" download className="resume-dl">Download {IC.arr}</a>
+          <button onClick={onClose} className="resume-close" aria-label="Close">&times;</button>
+        </div>
+      </div>
+      <div className="resume-body"><iframe src="/resume.pdf" title="Resume"/></div>
+    </div>
+  </div>
 }
 
 /* ══════════════════════════════════════════════ MAIN ══════════════════════════════════════════════ */
 export default function Portfolio(){
-  const[scrollY,setScrollY]=useState(0);
-  const[scrollPct,setScrollPct]=useState(0);
-  const[navShow,setNavShow]=useState(true);
-  const lastScroll=useRef(0);
-  const[activeProject,setActiveProject]=useState(null);
-  const[menuOpen,setMenuOpen]=useState(false);
-  const[showResume,setShowResume]=useState(false);
-  const[loaded,setLoaded]=useState(false);
-  const istTime=useClock();
+  const [scrollY, setScrollY] = useState(0);
+  const [scrollPct, setScrollPct] = useState(0);
+  const [navShow, setNavShow] = useState(true);
+  const lastScroll = useRef(0);
+  const [activeProject, setActiveProject] = useState(null);
+  const [menuOpen, setMenuOpen] = useState(false);
+  const [showResume, setShowResume] = useState(false);
+  const [loaded, setLoaded] = useState(false);
+  /* Latched intro progress: only increases, never decreases. Once the intro plays through once,
+     scrolling back to the top doesn't replay it. */
+  const introMaxRef = useRef(0);
+  const istTime = useClock();
 
-
-  /* Preloader — fill bar then reveal */
   useEffect(()=>{const t=setTimeout(()=>setLoaded(true),2200);return()=>clearTimeout(t)},[]);
 
-  useEffect(()=>{const fn=()=>{const y=window.scrollY;setScrollY(y);const docH=document.documentElement.scrollHeight-window.innerHeight;setScrollPct(docH>0?y/docH:0);if(y<100){setNavShow(true)}else if(y<lastScroll.current){setNavShow(true)}else if(y>lastScroll.current+5){setNavShow(false)}lastScroll.current=y};window.addEventListener("scroll",fn,{passive:true});return()=>window.removeEventListener("scroll",fn)},[]);
-  const go=(id)=>{document.getElementById(id)?.scrollIntoView({behavior:"smooth"});setMenuOpen(false)};
-  const navVis=navShow;
-  const goBack=()=>{if(window._pageFade){window._pageFade(()=>setActiveProject(null))}else{setActiveProject(null)}};
+  /* rAF-throttled scroll handler */
+  useEffect(()=>{
+    let raf = null;
+    const compute = ()=>{
+      const y = window.scrollY;
+      setScrollY(y);
+      const docH = document.documentElement.scrollHeight - window.innerHeight;
+      setScrollPct(docH>0? y/docH : 0);
+      if(y<100) setNavShow(true);
+      else if(y<lastScroll.current) setNavShow(true);
+      else if(y>lastScroll.current+5) setNavShow(false);
+      lastScroll.current = y;
+      raf = null;
+    };
+    const onScroll = ()=>{ if(!raf) raf = requestAnimationFrame(compute); };
+    window.addEventListener("scroll", onScroll, {passive:true});
+    compute();
+    return ()=>{window.removeEventListener("scroll", onScroll); if(raf) cancelAnimationFrame(raf)};
+  },[]);
 
-  if(activeProject){return(
-    <div style={{background:"transparent",minHeight:"100vh"}}><style>{CSS}</style><div className="grain"/>
-      <nav className="pill-nav"><span className="nav-brand" onClick={goBack}>ritwik.</span><div className="nav-pills"><button className="pill-btn" onClick={goBack}>Work</button></div><span className="nav-time">{istTime}</span></nav>
-      <button className="resume-btn" onClick={()=>setShowResume(true)}>Resume {IC.arr}</button>
-      <ProjectDetail project={activeProject} onBack={goBack}/>
-    </div>
-  )}
+  const go = (id)=>{document.getElementById(id)?.scrollIntoView({behavior:"smooth"}); setMenuOpen(false)};
+  /* goBack closes the project. We pop the history entry we pushed when opening, which also
+     handles the case where the user clicks the back arrow in our own UI (we want the
+     browser URL to revert as well, so a real Back press won't double-pop). */
+  const goBack = ()=>{
+    if(window.history.state && window.history.state.project){ window.history.back(); return; }
+    if(window._pageFade){ window._pageFade(()=>setActiveProject(null)) } else setActiveProject(null);
+  };
 
-  return(
-    <div style={{background:"transparent",color:"var(--cream)",minHeight:"100vh",position:"relative"}}>
-      <style>{CSS}</style><div className="grain"/>
+  /* Open a project = push a history entry. Browser Back will then fire popstate and we close. */
+  const openProject = (p)=>{
+    try{ window.history.pushState({project:p.id},"", `#${p.id}`); }catch(e){}
+    if(window._pageFade){ window._pageFade(()=>setActiveProject(p)) } else setActiveProject(p);
+  };
+
+  /* popstate listener: handles browser Back/Forward and any history.back() we trigger ourselves.
+     If a project is open and the user navigates back, close the project instead of leaving the site. */
+  useEffect(()=>{
+    const onPop = ()=>{
+      const st = window.history.state;
+      if(!st || !st.project){
+        if(activeProject){
+          if(window._pageFade){ window._pageFade(()=>setActiveProject(null)) } else setActiveProject(null);
+        }
+      }
+    };
+    window.addEventListener("popstate", onPop);
+    return ()=>window.removeEventListener("popstate", onPop);
+  },[activeProject]);
+
+  /* If the page loads with a #project hash, open that project after mount (deep linking) */
+  useEffect(()=>{
+    const hash = window.location.hash.replace("#","");
+    if(!hash) return;
+    const p = PROJECTS.find(pp=>pp.id===hash);
+    if(p){ setActiveProject(p); /* don't push state — we're already at this URL */ }
+  },[]);
+
+  if(activeProject){
+    return (
+      <div style={{background:"transparent",minHeight:"100vh",position:"relative",zIndex:1}}>
+        <style>{CSS}</style>
+        <div className="grain"/>
+        <nav className="pill-nav">
+          <span className="nav-brand" onClick={goBack}>ritwik.</span>
+          <div className="nav-pills"><button className="pill-btn" onClick={goBack}>← Work</button></div>
+          <span className="nav-time">{istTime}</span>
+        </nav>
+        <button className="resume-btn" onClick={()=>setShowResume(true)}>Resume {IC.arr}</button>
+        <ProjectDetail project={activeProject} onBack={goBack}/>
+        {showResume && <ResumeModal onClose={()=>setShowResume(false)}/>}
+      </div>
+    )
+  }
+
+  /* Intro sequence: globe + name start HUGE at center, settle into their places.
+     introProg is LATCHED — once it hits 1, scrolling back up keeps it at 1 so the intro never replays. */
+  const liveProg = Math.min(1, scrollY / 700);
+  if (liveProg > introMaxRef.current) introMaxRef.current = liveProg;
+  const introProg = introMaxRef.current;
+  const introInv = 1 - introProg;
+  /* Hero exit: scale + fade on scroll down (only after intro completes) */
+  const heroScale = Math.max(0.92, 1 - Math.max(0, scrollY-700)/2400);
+  const heroOpac = Math.max(0, Math.min(1, (1600 - scrollY) / 500));
+  /* Globe visibility: always 1 while near hero, fades to 0 when user scrolls past hero into content sections */
+  const globeFade = Math.max(0, Math.min(1, (1200 - scrollY) / 400));
+
+  return (
+    <div style={{background:"transparent",color:"var(--cream)",minHeight:"100vh",position:"relative",zIndex:1,"--intro-prog":introProg,"--intro-inv":introInv}}>
+      <style>{CSS}</style>
+      <div className="grain"/>
 
       {/* ─── PRELOADER ─── */}
       <div className="preloader" style={{opacity:loaded?0:1,pointerEvents:loaded?"none":"all",transition:"opacity 0.6s ease 0.3s"}}>
-        <div className="preloader-bar"><div className="preloader-fill"/></div>
+        <div className="preloader-inner">
+          <div className="preloader-name"><em>R /</em> Ritwik Kumar</div>
+          <div className="preloader-bar"><div className="preloader-fill"/></div>
+          <div className="preloader-tag">{new Date().getFullYear()}</div>
+        </div>
       </div>
 
-      {/* ─── SCROLL PROGRESS BAR ─── */}
-      <div style={{position:"fixed",top:0,left:0,width:"100%",height:"2px",background:"transparent",zIndex:1002}}>
-        <div style={{height:"100%",background:"linear-gradient(90deg,var(--cream-dim),var(--cream))",width:`${scrollPct*100}%`,transition:"width 0.08s linear",boxShadow:scrollPct>0?"0 0 8px rgba(232,228,222,0.25)":"none"}}/>
+      {/* ─── SCROLL PROGRESS ─── */}
+      <div className="scroll-prog-wrap">
+        <div className="scroll-prog" style={{width:`${scrollPct*100}%`,boxShadow:scrollPct>0?"0 0 10px rgba(232,228,222,0.3)":"none"}}/>
       </div>
 
-      {/* ─── PILL NAV ─── */}
-      <nav className="pill-nav" style={{opacity:navVis?1:0,transform:navVis?"translateX(-50%) translateY(0)":"translateX(-50%) translateY(-20px)"}}>
+      {/* ─── NAV ─── */}
+      <nav className="pill-nav" style={{opacity:navShow?1:0,transform:navShow?"translateX(-50%) translateY(0)":"translateX(-50%) translateY(-20px)"}}>
         <span className="nav-brand" onClick={()=>go("home")}>ritwik.</span>
         <div className="nav-pills">{[["about","About"],["skills","Stack"],["projects","Work"],["experience","Exp"],["contact","Contact"]].map(([id,l])=><button key={id} className="pill-btn" onClick={()=>go(id)}>{l}</button>)}</div>
         <span className="nav-time">{istTime}</span>
       </nav>
-      <div className="mobile-nav" style={{opacity:navVis?1:0}}>
+      <div className="mobile-nav" style={{opacity:navShow?1:0}}>
         <span className="nav-brand" onClick={()=>go("home")}>ritwik.</span>
         <button className="mob-btn" onClick={()=>setMenuOpen(!menuOpen)}>{menuOpen?"CLOSE":"MENU"}</button>
       </div>
       <button className="resume-btn" onClick={()=>setShowResume(true)}>Resume {IC.arr}</button>
-      {menuOpen&&<div style={{position:"fixed",inset:0,zIndex:999,background:"rgba(15,15,15,0.97)",display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center",gap:"28px"}}>
-        {["about","skills","projects","experience","contact"].map(s=><button key={s} onClick={()=>go(s)} style={{background:"none",border:"none",cursor:"pointer",fontFamily:"'Bebas Neue'",fontSize:"36px",color:"var(--cream)",letterSpacing:"0.08em",textTransform:"uppercase"}}>{s}</button>)}
-        <button onClick={()=>{setShowResume(true);setMenuOpen(false)}} style={{background:"none",border:"none",cursor:"pointer",fontFamily:"'Bebas Neue'",fontSize:"36px",color:"var(--cream)",letterSpacing:"0.08em",textTransform:"uppercase"}}>Resume</button>
-      </div>}
+      {menuOpen && <MobileMenu go={go} setShowResume={setShowResume} setMenuOpen={setMenuOpen}/>}
 
-      {/* ─── HERO WITH GLOBE ─── */}
-      <section id="home" style={{minHeight:"100vh",display:"flex",alignItems:"center",justifyContent:"center",padding:"120px 40px 80px",position:"relative",overflow:"hidden"}}>
-        <div style={{position:"absolute",bottom:0,left:0,right:0,height:"30%",background:"linear-gradient(to top,var(--bg),transparent)",pointerEvents:"none",zIndex:1}}/>
-        <div className="hero-row">
-          <div style={{flex:1,zIndex:1}}>
-            <h1 className="hero-title">RITWIK<br/>KUMAR</h1>
-            <div style={{maxWidth:"520px",marginTop:"36px",opacity:0,animation:"fadeUp 0.8s ease 0.6s forwards"}}>
-              <p style={{fontSize:"17px",color:"var(--cream-dim)",lineHeight:1.7}}>Data Science & ML engineer crafting intelligent systems — from predictive models to production-grade analytics platforms. B.Tech CSE @ SRMIST.</p>
-              <div style={{display:"flex",gap:"16px",marginTop:"28px",flexWrap:"wrap"}}>
-                <button onClick={()=>go("projects")} className="btn-primary">View Work</button>
-                <button onClick={()=>go("contact")} className="btn-ghost">Get in Touch</button>
+      {/* ═══════════ HERO ═══════════ */}
+      <section id="home" className="hero" style={{opacity:heroOpac,transform:`scale(${heroScale})`,transformOrigin:"center 35%"}}>
+        <div className="hero-inner">
+          <div className="hero-status hero-fly hero-fly-tl">
+            <span className="status-dot"/>
+            <span>Available for <em>work</em></span>
+          </div>
+
+          <div className="hero-title-wrap hero-title-fade">
+            <h1 className="hero-title">
+              <span className="htl-line"><span className="htl-word">RITWIK</span></span>
+              <span className="htl-line"><span className="htl-word">KUMAR</span></span>
+            </h1>
+          </div>
+
+          <div className="hero-meta hero-fly hero-fly-bl">
+            <div className="hero-meta-grid">
+              <div className="hm-col">
+                <div className="hm-label">(Role)</div>
+                <div className="hm-val">ML Engineer<br/>Full-stack</div>
+              </div>
+              <div className="hm-col">
+                <div className="hm-label">(Based)</div>
+                <div className="hm-val">Chennai /<br/>Delhi NCR</div>
+              </div>
+              <div className="hm-col">
+                <div className="hm-label">(Focus)</div>
+                <div className="hm-val">Deep Learning<br/>Data pipelines</div>
               </div>
             </div>
+            <div className="hero-globe-spacer" aria-hidden="true"/>
           </div>
-          <div className="globe-container"><DarkGlobe/></div>
+
+          <div className="hero-ctas hero-fly hero-fly-br">
+            <Magnetic strength={0.18}><button onClick={()=>go("projects")} className="btn-primary">View Work <span className="arr">→</span></button></Magnetic>
+            <Magnetic strength={0.18}><button onClick={()=>go("contact")} className="btn-ghost">Get in Touch</button></Magnetic>
+          </div>
+        </div>
+
+        <div className="hero-bottom hero-fly hero-fly-down">
+          <button className="hero-scroll-hint" onClick={()=>go("about")} aria-label="Scroll to next section" type="button">
+            <span className="scroll-line"/>
+            <span className="scroll-word">SCROLL</span>
+            <span className="scroll-arrow" aria-hidden="true">↓</span>
+          </button>
+          <div className="hero-ticker">
+            <div className="hero-ticker-track">
+              {[...Array(3)].flatMap((_,k)=>["AVAILABLE FOR WORK","MACHINE LEARNING","DEEP LEARNING","GRAPH NEURAL NETS","DATA PIPELINES","FULL-STACK","PYTORCH","TENSORFLOW","CHENNAI / DELHI NCR"].map((t,i)=>(
+                <span key={`${k}-${i}`} className="ticker-item"><em>{t}</em><span className="ticker-dot">✦</span></span>
+              )))}
+            </div>
+          </div>
         </div>
       </section>
 
-      {/* ─── ABOUT ─── */}
-      <section id="about" style={{padding:"120px 40px",maxWidth:"1400px",margin:"0 auto"}}>
-        <Reveal><div className="s-tag">About</div></Reveal>
-        <Reveal delay={0.05}><h2 className="s-head">Building with data,<br/>driven by curiosity.</h2></Reveal>
-        <div className="about-grid" style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:"60px",alignItems:"start"}}>
-          <RevealLeft delay={0.1}><div>
-            <p style={{fontSize:"16px",color:"var(--cream-dim)",lineHeight:1.8,marginBottom:"24px"}}>Third-year CSE student specializing in Data Science & Business Systems at SRMIST, Chennai. I work at the intersection of machine learning, data engineering, and full-stack development — taking problems from raw data to deployed product.</p>
-            <p style={{fontSize:"16px",color:"var(--cream-dim)",lineHeight:1.8}}>From building predictive dashboards on decades of F1 race data to engineering NLP pipelines from scratch, I thrive on making complex data useful and accessible.</p>
-            <div style={{marginTop:"32px",display:"flex",gap:"40px",flexWrap:"wrap"}}>
-              {[{end:9.16,dec:2,label:"CGPA"},{end:2027,dec:0,label:"Graduation"},{end:2,dec:0,label:"Certifications"}].map(s=><div key={s.label}><AnimCount end={s.end} decimals={s.dec} duration={s.end>100?1500:2000}/><div style={{fontSize:"11px",color:"var(--mid)",letterSpacing:"0.12em",textTransform:"uppercase"}}>{s.label}</div></div>)}
+      {/* ═══════════ NAME STAGE — fixed overlay that starts over the globe and flies to the hero title position ═══════════ */}
+      <div className="name-stage" aria-hidden="true">
+        <span className="name-line">RITWIK</span>
+        <span className="name-line">KUMAR</span>
+      </div>
+
+      {/* ═══════════ GLOBE STAGE (fixed) — starts huge & centered, settles to right half of screen (large) ═══════════ */}
+      <div className="globe-stage" style={{opacity:globeFade,pointerEvents:introProg>0.85 && globeFade>0.5?"auto":"none"}} aria-hidden={globeFade<0.3}>
+        <div className="globe-stage-inner" style={{transform:`translate(-50%, -50%) translate(${introProg*20}vw, ${introProg*-6}vh) scale(${1 - introProg*0.42})`}}>
+          <DarkGlobe/>
+        </div>
+        {/* Scroll hint that stays visible during intro — clickable to advance past the intro */}
+        <button className="globe-intro-hint" style={{opacity:introInv,pointerEvents:introInv>0.1?"auto":"none"}}
+                onClick={()=>window.scrollTo({top:760,behavior:"smooth"})}
+                aria-label="Begin" type="button">
+          <span className="gih-line"/>
+          <span>SCROLL TO BEGIN</span>
+        </button>
+      </div>
+
+      {/* ═══════════ ABOUT ═══════════ */}
+      <section id="about" className="section section-about">
+        <div className="section-head section-head-tall">
+          <div className="section-num">(01)</div>
+          <div className="section-labels">
+            <div className="s-tag">About</div>
+            <Reveal delay={0.05}><h2 className="s-head-big about-head">ML engineer,<br/><em>data</em> scientist.</h2></Reveal>
+          </div>
+        </div>
+        <div className="about-grid">
+          <RevealLeft delay={0.1}>
+            <div className="about-text">
+              <p>Pre-Final year <em>Computer Science</em> student at SRMIST, Chennai — specialising in Data Science & Business Systems. I build ML models, graph neural networks, and data pipelines that ship.</p>
+              <p>From predictive dashboards on decades of F1 race data to NLP pipelines written from scratch, I turn raw data into deployed product.</p>
+              <div className="counters">
+                {[{end:2027,dec:0,label:"Graduation",start:2020,dur:1400},{end:15,dec:0,label:"Projects Shipped",start:0,dur:1600,suffix:"+"},{end:10,dec:0,label:"Technologies",start:0,dur:1400,suffix:"+"}].map(s=>
+                  <div key={s.label} className="counter-item">
+                    <AnimCount end={s.end} decimals={s.dec} duration={s.dur} start={s.start} suffix={s.suffix||""}/>
+                    <div className="counter-label">{s.label}</div>
+                  </div>
+                )}
+              </div>
             </div>
-          </div></RevealLeft>
+          </RevealLeft>
           <RevealRight delay={0.2}>
-            <div style={{borderRadius:"12px",overflow:"hidden",border:"1px solid var(--border)",aspectRatio:"3/4"}}>
-              <img src={PHOTO_URL} alt="Ritwik Kumar" style={{width:"100%",height:"120%",objectFit:"cover",filter:"grayscale(30%) contrast(1.1) brightness(0.9)",transform:`translateY(${-scrollY*0.06}px)`,transition:"transform 0.1s linear"}}/>
+            <div className="about-photo-wrap">
+              <div className="about-photo">
+                <img src={PHOTO_URL} alt="Ritwik Kumar" style={{transform:`translate3d(0,${-scrollY*0.04}px,0) scale(1.08)`}}/>
+              </div>
+              <div className="photo-caption">
+                <span>Ritwik Kumar</span><em>Chennai, 2026</em>
+              </div>
             </div>
           </RevealRight>
         </div>
       </section>
 
-      {/* ─── SKILLS MARQUEE ─── */}
-      <section id="skills" style={{padding:"100px 0",overflow:"hidden"}}>
-        <Reveal><div style={{textAlign:"center",marginBottom:"48px",padding:"0 40px",maxWidth:"1400px",margin:"0 auto"}}><div className="s-tag">What I work with</div><h2 className="s-head">The arsenal</h2></div></Reveal>
-        <div className="marquee-left" style={{marginBottom:"16px",overflow:"hidden"}}><div className="marquee-track">{SKILLS_ROW1.map((s,i)=><div key={`a${i}`} className="marquee-item">{s}</div>)}</div></div>
-        <div className="marquee-right" style={{overflow:"hidden"}}><div className="marquee-track">{SKILLS_ROW2.map((s,i)=><div key={`b${i}`} className="marquee-item">{s}</div>)}</div></div>
-      </section>
-
-      {/* ─── PROJECTS ─── */}
-      <section id="projects" style={{padding:"100px 40px",maxWidth:"1400px",margin:"0 auto"}}>
-        <Reveal><div className="s-tag">Selected Work</div></Reveal>
-        <Reveal delay={0.05}><h2 className="s-head" style={{fontSize:"clamp(40px,7vw,80px)",marginBottom:"64px"}}>See my latest work</h2></Reveal>
-        <div className="projects-grid">
-          {PROJECTS.map((p,i)=>{const W=i%2===0?RevealLeft:RevealRight;return(
-            <W key={p.id} delay={i*0.12}><TiltCard className="project-tile" onClick={()=>{if(window._pageFade){window._pageFade(()=>setActiveProject(p))}else{setActiveProject(p)}}}>
-              <div className="project-img" style={{background:p.cover?`url(${p.cover}) center/cover`:p.coverGradient}}>
-                {p.cover?<img src={p.cover} alt={p.title} style={{width:"100%",height:"100%",objectFit:"cover"}}/>:<div style={{width:"100%",height:"100%",display:"flex",alignItems:"center",justifyContent:"center"}}><span style={{fontFamily:"'Bebas Neue'",fontSize:"clamp(36px,5vw,64px)",color:"rgba(255,255,255,0.15)"}}>{p.num}</span></div>}
-              </div>
-              <div className="project-info"><h3 style={{fontFamily:"'Bebas Neue'",fontSize:"24px",letterSpacing:"0.02em",marginBottom:"4px"}}>{p.title}</h3><span style={{fontSize:"13px",color:"var(--cream-dim)",fontFamily:"'JetBrains Mono',monospace"}}>{p.subtitle}</span></div>
-            </TiltCard></W>
-          )})}
-        </div>
-      </section>
-
-      {/* ─── EXPERIENCE ─── */}
-      <section id="experience" style={{padding:"100px 40px",maxWidth:"1400px",margin:"0 auto"}}>
-        <Reveal><div className="s-tag">Experience</div></Reveal>
-        <Reveal delay={0.05}><h2 className="s-head">Leadership & Activities</h2></Reveal>
-        <div style={{marginLeft:"8px"}}>{EXPERIENCE.map((exp,i)=><Reveal key={i} delay={i*0.1}><div className="exp-card">
-          <div style={{display:"flex",justifyContent:"space-between",flexWrap:"wrap",gap:"8px",marginBottom:"8px"}}>
-            <div><h4 style={{fontSize:"18px",fontWeight:600,marginBottom:"4px"}}>{exp.role}</h4><span style={{fontSize:"15px",color:"var(--cream-dim)"}}>{exp.org}</span></div>
-            <span style={{fontSize:"13px",color:"var(--mid)",fontFamily:"'JetBrains Mono',monospace"}}>{exp.period}</span>
+      {/* ═══════════ SKILLS ═══════════ */}
+      <section id="skills" className="section section-skills">
+        <div className="section-head">
+          <div className="section-num">(02)</div>
+          <div className="section-labels">
+            <div className="s-tag">What I work with</div>
+            <Reveal delay={0.05}><h2 className="s-head">Tech <em>stack.</em></h2></Reveal>
           </div>
-          <p style={{fontSize:"14px",color:"var(--cream-dim)",lineHeight:1.7,maxWidth:"600px"}}>{exp.desc}</p>
-        </div></Reveal>)}</div>
+        </div>
+        <div className="marquee-left"><div className="marquee-track">{SKILLS_ROW1.map((s,i)=><div key={`a${i}`} className="marquee-item">{s}</div>)}</div></div>
+        <div className="marquee-right"><div className="marquee-track">{SKILLS_ROW2.map((s,i)=><div key={`b${i}`} className="marquee-item">{s}</div>)}</div></div>
       </section>
 
-      {/* ─── CONTACT ─── */}
-      <section id="contact" style={{padding:"100px 40px",maxWidth:"1400px",margin:"0 auto"}}>
-        <Reveal><div className="s-tag">Contact</div></Reveal>
-        <Reveal delay={0.05}><h2 className="s-head">Let's connect</h2></Reveal>
-        <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:"60px",alignItems:"start"}}>
-          <Reveal delay={0.1}><div>
-            <p style={{fontSize:"17px",color:"var(--cream-dim)",lineHeight:1.8,marginBottom:"32px"}}>Open to internships, collaborations, and interesting conversations. Drop me a line or connect on socials.</p>
-            <a href="mailto:kritwik495@gmail.com" className="contact-cta">
-              <div style={{display:"flex",alignItems:"center",gap:"14px"}}>
-                <div style={{width:"48px",height:"48px",borderRadius:"50%",background:"rgba(232,228,222,0.06)",display:"flex",alignItems:"center",justifyContent:"center",flexShrink:0}}>{IC.mail}</div>
-                <div><div style={{fontSize:"12px",color:"var(--mid)",fontFamily:"'JetBrains Mono',monospace",letterSpacing:"0.1em",textTransform:"uppercase",marginBottom:"4px"}}>Email me</div>
-                <div style={{fontSize:"18px",fontWeight:500}}>kritwik495@gmail.com</div></div>
-              </div>
-              <span style={{color:"var(--cream-dim)",transition:"transform 0.3s"}}>{IC.arr}</span>
-            </a>
-          </div></Reveal>
-          <Reveal delay={0.15}><div style={{display:"flex",flexDirection:"column",gap:"14px"}}>
-            {[{icon:IC.phone,label:"Phone",value:"+91 98910 03096",href:"tel:+919891003096"},{icon:IC.gh,label:"GitHub",value:"@Ritzwik",href:"https://github.com/Ritzwik"},{icon:IC.li,label:"LinkedIn",value:"Ritwik Kumar",href:"https://www.linkedin.com/in/ritwikk03/"}].map((c,i)=>
-              <a key={i} href={c.href} target="_blank" rel="noopener noreferrer" className="contact-link"><div style={{width:"36px",height:"36px",borderRadius:"50%",background:"rgba(232,228,222,0.04)",display:"flex",alignItems:"center",justifyContent:"center",flexShrink:0,color:"var(--cream-dim)"}}>{c.icon}</div><div style={{flex:1}}><div style={{fontSize:"10px",color:"var(--mid)",fontFamily:"'JetBrains Mono',monospace",letterSpacing:"0.12em",textTransform:"uppercase"}}>{c.label}</div><div style={{fontSize:"14px",marginTop:"2px"}}>{c.value}</div></div><span style={{color:"var(--mid)",opacity:0.5}}>{IC.arr}</span></a>
-            )}
-          </div></Reveal>
+      {/* ═══════════ PROJECTS — STACKING ═══════════ */}
+      <section id="projects" className="section section-projects">
+        <div className="section-head">
+          <div className="section-num">(03)</div>
+          <div className="section-labels">
+            <div className="s-tag">Work</div>
+            <Reveal delay={0.05}><h2 className="s-head"><em>Projects.</em></h2></Reveal>
+          </div>
+        </div>
+        <div className="stack-hint">
+          <span className="scroll-line-h"/>
+          <span>Scroll — projects stack as you go</span>
+        </div>
+        <div className="stack-wrapper">
+          {PROJECTS.map((p,i)=>
+            <StackCard key={p.id} project={p} index={i} total={PROJECTS.length} onClick={()=>openProject(p)}/>
+          )}
         </div>
       </section>
 
-      <footer style={{borderTop:"1px solid var(--border)",padding:"40px",textAlign:"center"}}><p style={{fontFamily:"'JetBrains Mono',monospace",fontSize:"12px",color:"var(--mid)"}}>&copy; {new Date().getFullYear()} Ritwik Kumar</p></footer>
+      {/* ═══════════ EXPERIENCE ═══════════ */}
+      <section id="experience" className="section">
+        <div className="section-head">
+          <div className="section-num">(04)</div>
+          <div className="section-labels">
+            <div className="s-tag">Leadership & Activities</div>
+            <Reveal delay={0.05}><h2 className="s-head">Professional <em>experience.</em></h2></Reveal>
+          </div>
+        </div>
+        <div className="exp-list">{EXPERIENCE.map((exp,i)=>
+          <Reveal key={i} delay={i*0.1}>
+            <div className="exp-card-v2">
+              <div className="exp-period">{exp.period}</div>
+              <div className="exp-body">
+                <div className="exp-role-line"><h4>{exp.role}</h4><span className="exp-sep">/</span><span className="exp-org"><em>{exp.org}</em></span></div>
+                <p>{exp.desc}</p>
+              </div>
+            </div>
+          </Reveal>
+        )}</div>
+      </section>
+
+      {/* ═══════════ CONTACT ═══════════ */}
+      <section id="contact" className="section section-contact">
+        <div className="section-head">
+          <div className="section-num">(05)</div>
+          <div className="section-labels">
+            <div className="s-tag">Contact</div>
+            <Reveal delay={0.05}><h2 className="s-head-big">Get in <em>touch.</em></h2></Reveal>
+          </div>
+        </div>
+        <div className="contact-grid-v2">
+          <Reveal delay={0.1}>
+            <a href="mailto:kritwik495@gmail.com" className="contact-cta-v2">
+              <div className="cta-ico-wrap">{IC.mail}</div>
+              <div className="cta-body">
+                <div className="cta-label">Drop a line</div>
+                <div className="cta-val">kritwik495@gmail.com</div>
+              </div>
+              <span className="cta-arrow">{IC.arr}</span>
+            </a>
+          </Reveal>
+          <Reveal delay={0.15}>
+            <div className="contact-socials">
+              {[{icon:IC.phone,label:"Phone",value:"+91 98910 03096",href:"tel:+919891003096"},{icon:IC.gh,label:"GitHub",value:"@Ritzwik",href:"https://github.com/Ritzwik"},{icon:IC.li,label:"LinkedIn",value:"Ritwik Kumar",href:"https://www.linkedin.com/in/ritwikk03/"}].map((c,i)=>
+                <a key={i} href={c.href} target="_blank" rel="noopener noreferrer" className="contact-link-v2">
+                  <div className="cl-ico">{c.icon}</div>
+                  <div className="cl-body"><div className="cl-label">{c.label}</div><div className="cl-val">{c.value}</div></div>
+                  <span className="cl-arrow">{IC.arr}</span>
+                </a>
+              )}
+            </div>
+          </Reveal>
+        </div>
+      </section>
+
+      {/* ═══════════ FOOTER ═══════════ */}
+      <footer className="footer-v2">
+        <div className="footer-huge">
+          <span>RITWIK <em>KUMAR.</em></span>
+        </div>
+        <div className="footer-ticker">
+          <div className="footer-ticker-track">
+            {[...Array(3)].flatMap((_,k)=>["RITWIK KUMAR","AVAILABLE FOR WORK","MACHINE LEARNING","DEEP LEARNING","GRAPH NEURAL NETS","FULL-STACK ENGINEERING","CHENNAI / DELHI NCR"].map((t,i)=>(
+              <span key={`${k}-${i}`} className="ticker-item"><em>{t}</em><span className="ticker-dot">✦</span></span>
+            )))}
+          </div>
+        </div>
+        <div className="footer-meta">
+          <span>© {new Date().getFullYear()} Ritwik Kumar</span>
+          <span>All rights reserved</span>
+        </div>
+      </footer>
+
       <MusicPlayer/>
-      {/* ─── BACK TO TOP ─── */}
+
       <button className="back-to-top" onClick={()=>window.scrollTo({top:0,behavior:"smooth"})} style={{opacity:scrollPct>0.3?1:0,transform:scrollPct>0.3?"translateY(0)":"translateY(20px)",pointerEvents:scrollPct>0.3?"auto":"none"}}>
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--cream)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M18 15l-6-6-6 6"/></svg>
       </button>
-      {showResume&&<div className="resume-overlay" onClick={(e)=>{if(e.target===e.currentTarget)setShowResume(false)}}>
-        <div className="resume-modal">
-          <div className="resume-header">
-            <span style={{fontFamily:"'Bebas Neue'",fontSize:"22px",letterSpacing:"0.04em"}}>Resume</span>
-            <div style={{display:"flex",gap:"10px",alignItems:"center"}}>
-              <a href="/resume.pdf" download className="resume-dl">Download {IC.arr}</a>
-              <button onClick={()=>setShowResume(false)} className="resume-close">&times;</button>
-            </div>
-          </div>
-          <div className="resume-body"><iframe src="/resume.pdf" title="Resume" style={{width:"100%",height:"100%",border:"none",borderRadius:"0 0 12px 12px"}}/></div>
-        </div>
-      </div>}
+
+      {showResume && <ResumeModal onClose={()=>setShowResume(false)}/>}
     </div>
   );
 }
 
-/* ── CSS ── */
+
+/* ══════════════════════════════════════════════ CSS ══════════════════════════════════════════════ */
 const CSS=`
-@import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500;600;700&family=JetBrains+Mono:wght@300;400&display=swap');
-:root{--bg:#0f0f0f;--surface:#181818;--border:#282828;--cream:#e8e4de;--cream-dim:#9e9a94;--dark:#0f0f0f;--mid:#5e5a54}
-*{box-sizing:border-box;margin:0;padding:0}html{scroll-behavior:smooth;text-size-adjust:100%;-webkit-text-size-adjust:100%}
-body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--cream);overflow-x:hidden;min-width:320px}
-::selection{background:rgba(232,228,222,0.2)}::-webkit-scrollbar{width:5px}::-webkit-scrollbar-track{background:var(--bg)}::-webkit-scrollbar-thumb{background:var(--border);border-radius:3px}
+@import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500;600;700&family=Instrument+Serif:ital@0;1&family=JetBrains+Mono:wght@300;400&display=swap');
+
+:root{
+  --bg:#070707; --bg-2:#0a0a0a;
+  --surface:#121212; --surface-2:#181818;
+  --border:rgba(255,255,255,0.08); --border-2:rgba(255,255,255,0.14);
+  --cream:#e8e4de; --cream-dim:#9e9a94; --mid:#5a5650; --dark:#050505;
+  --accent:#8f7e5f;
+  --glass-bg:linear-gradient(135deg,rgba(48,48,48,0.55),rgba(14,14,14,0.7));
+  --glass-bg-strong:linear-gradient(135deg,rgba(60,60,60,0.65),rgba(18,18,18,0.78));
+  --glass-bd:rgba(255,255,255,0.09); --glass-bd-top:rgba(255,255,255,0.18);
+  --glass-shadow:0 12px 40px rgba(0,0,0,0.45),0 2px 8px rgba(0,0,0,0.3),inset 0 1px 0 rgba(255,255,255,0.08),inset 0 -1px 0 rgba(0,0,0,0.2);
+  --glass-shadow-hover:0 20px 60px rgba(0,0,0,0.6),0 4px 12px rgba(0,0,0,0.4),inset 0 1px 0 rgba(255,255,255,0.14),inset 0 -1px 0 rgba(0,0,0,0.2);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth;text-size-adjust:100%;-webkit-text-size-adjust:100%}
+body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--cream);overflow-x:hidden;min-width:320px;-webkit-font-smoothing:antialiased}
+em{font-family:'Instrument Serif',serif;font-style:italic;font-weight:400;letter-spacing:-0.01em}
+::selection{background:rgba(232,228,222,0.22);color:var(--cream)}
+::-webkit-scrollbar{width:5px}
+::-webkit-scrollbar-track{background:var(--bg)}
+::-webkit-scrollbar-thumb{background:var(--border-2);border-radius:3px}
+
+/* ─── KEYFRAMES ─── */
 @keyframes marquee-left{0%{transform:translateX(0)}100%{transform:translateX(-50%)}}
 @keyframes marquee-right{0%{transform:translateX(-50%)}100%{transform:translateX(0)}}
-@keyframes heroText{from{opacity:0;transform:translateY(80px) scaleY(1.15)}to{opacity:1;transform:translateY(0) scaleY(1)}}
+@keyframes heroText{from{opacity:0;transform:translateY(100%)}to{opacity:1;transform:translateY(0)}}
 @keyframes fadeUp{from{opacity:0;transform:translateY(40px)}to{opacity:1;transform:translateY(0)}}
-@keyframes grain{0%,100%{transform:translate(0)}25%{transform:translate(-3%,-8%)}50%{transform:translate(5%,3%)}75%{transform:translate(-7%,6%)}}
-.grain{position:fixed;inset:0;pointer-events:none;z-index:9997;opacity:0.25;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");animation:grain 6s steps(8) infinite}
-.pill-nav{position:fixed;top:16px;left:50%;transform:translateX(-50%);z-index:1000;display:flex;align-items:center;gap:20px;padding:10px 24px;background:linear-gradient(135deg,rgba(40,40,40,0.55),rgba(20,20,20,0.65));backdrop-filter:blur(32px) saturate(1.6);-webkit-backdrop-filter:blur(32px) saturate(1.6);border:1px solid rgba(255,255,255,0.08);border-top-color:rgba(255,255,255,0.12);border-left-color:rgba(255,255,255,0.1);border-radius:999px;box-shadow:0 8px 32px rgba(0,0,0,0.4),inset 0 1px 0 rgba(255,255,255,0.06);transition:opacity 0.4s,transform 0.4s}
-.nav-brand{font-family:'Bebas Neue';font-size:20px;letter-spacing:0.04em;cursor:pointer;color:var(--cream)}.nav-pills{display:flex;gap:4px}
-.pill-btn{background:none;border:none;cursor:pointer;font-family:'DM Sans';font-size:13px;font-weight:500;color:var(--cream-dim);padding:6px 14px;border-radius:999px;transition:all 0.25s}.pill-btn:hover{color:var(--cream);background:rgba(255,255,255,0.08)}
-.nav-time{font-family:'JetBrains Mono',monospace;font-size:13px;color:var(--cream);font-weight:500;white-space:nowrap}
-.resume-btn{position:fixed;top:16px;right:20px;z-index:1001;display:inline-flex;align-items:center;gap:5px;padding:8px 18px;font-family:'DM Sans',sans-serif;font-size:13px;font-weight:600;color:var(--cream);background:linear-gradient(135deg,rgba(40,40,40,0.55),rgba(20,20,20,0.65));backdrop-filter:blur(32px) saturate(1.6);-webkit-backdrop-filter:blur(32px) saturate(1.6);border:1px solid rgba(255,255,255,0.08);border-top-color:rgba(255,255,255,0.12);border-radius:999px;box-shadow:0 8px 32px rgba(0,0,0,0.4),inset 0 1px 0 rgba(255,255,255,0.06);transition:all 0.3s;letter-spacing:0.02em;cursor:pointer}.resume-btn:hover{background:linear-gradient(135deg,rgba(60,60,60,0.6),rgba(30,30,30,0.7));border-color:rgba(255,255,255,0.15);box-shadow:0 12px 40px rgba(0,0,0,0.5),inset 0 1px 0 rgba(255,255,255,0.1)}
-.date-badge{position:fixed;top:20px;left:24px;z-index:1001;font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:0.04em;color:var(--mid);transition:color 0.3s}.date-badge:hover{color:var(--cream-dim)}
-.mobile-nav{display:none;position:fixed;top:0;left:0;right:0;z-index:1000;padding:16px 24px;justify-content:space-between;align-items:center;background:linear-gradient(180deg,rgba(20,20,20,0.8),rgba(15,15,15,0.7));backdrop-filter:blur(32px) saturate(1.6);-webkit-backdrop-filter:blur(32px) saturate(1.6);border-bottom:1px solid rgba(255,255,255,0.06);transition:opacity 0.4s}
-.mob-btn{background:none;border:1px solid var(--border);border-radius:6px;padding:8px 14px;color:var(--cream);cursor:pointer;font-size:12px;font-family:'DM Sans'}
-.hero-title{font-family:'Bebas Neue',sans-serif;font-size:clamp(80px,18vw,240px);line-height:0.88;letter-spacing:-0.02em;color:var(--cream);text-transform:uppercase;animation:heroText 1s cubic-bezier(0.16,1,0.3,1) 0.2s both}
-.hero-row{display:flex;align-items:center;justify-content:space-between;width:100%;max-width:1400px;margin:0 auto;gap:0}
-.globe-container{flex:0 0 auto;opacity:0.85;animation:fadeUp 1.2s ease 0.4s both}
-.globe-wrap{width:clamp(300px,35vw,500px);height:clamp(300px,35vw,500px)}
-.btn-primary{padding:14px 32px;background:var(--cream);color:var(--dark);border:none;border-radius:6px;cursor:pointer;font-family:'DM Sans';font-size:14px;font-weight:600;transition:transform 0.2s,box-shadow 0.2s}.btn-primary:hover{transform:translateY(-2px);box-shadow:0 8px 24px rgba(232,228,222,0.15)}
-.btn-ghost{padding:14px 32px;background:transparent;color:var(--cream);border:1px solid var(--border);border-radius:6px;cursor:pointer;font-family:'DM Sans';font-size:14px;font-weight:500;transition:border-color 0.3s}.btn-ghost:hover{border-color:var(--cream-dim)}
-.marquee-track{display:flex;width:max-content;gap:16px}.marquee-left .marquee-track{animation:marquee-left 45s linear infinite}.marquee-right .marquee-track{animation:marquee-right 45s linear infinite}.marquee-left:hover .marquee-track,.marquee-right:hover .marquee-track{animation-play-state:paused}
-.marquee-item{padding:14px 36px;border:1px solid var(--border);border-radius:6px;font-family:'JetBrains Mono',monospace;font-size:14px;color:var(--cream-dim);white-space:nowrap;transition:all 0.6s ease;background:var(--surface)}
-.marquee-track:has(.marquee-item:hover) .marquee-item{opacity:0.25;border-color:var(--border);color:var(--mid)}
-.marquee-track:has(.marquee-item:hover) .marquee-item:hover{opacity:1;color:var(--cream);border-color:rgba(232,228,222,0.35);background:rgba(232,228,222,0.06);box-shadow:0 0 20px rgba(232,228,222,0.08);transform:scale(1.05)}
-.projects-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:24px}
-.project-tile{cursor:pointer;border-radius:16px;overflow:hidden;border:1px solid var(--border)}.project-tile:hover{border-color:rgba(232,228,222,0.15);box-shadow:0 24px 60px rgba(0,0,0,0.5)}
-.project-img{width:100%;aspect-ratio:16/10;overflow:hidden;position:relative}.project-tile:hover .project-img img,.project-tile:hover .project-img>div{transform:scale(1.03);transition:transform 0.6s cubic-bezier(0.16,1,0.3,1)}.project-info{padding:20px 24px}
-.s-tag{font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:0.2em;text-transform:uppercase;color:var(--cream-dim);margin-bottom:16px}
-.s-head{font-family:'Bebas Neue',sans-serif;font-size:clamp(36px,6vw,64px);line-height:1;letter-spacing:0.02em;text-transform:uppercase;color:var(--cream);margin-bottom:48px}
-.contact-link{display:flex;align-items:center;gap:14px;padding:16px 20px;background:linear-gradient(135deg,rgba(35,35,35,0.5),rgba(20,20,20,0.6));backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border:1px solid rgba(255,255,255,0.06);border-top-color:rgba(255,255,255,0.1);border-radius:10px;text-decoration:none;color:var(--cream);box-shadow:0 4px 20px rgba(0,0,0,0.3),inset 0 1px 0 rgba(255,255,255,0.04);transition:all 0.3s}.contact-link:hover{border-color:rgba(255,255,255,0.15);transform:translateY(-2px);box-shadow:0 12px 40px rgba(0,0,0,0.5),inset 0 1px 0 rgba(255,255,255,0.08)}
-.contact-cta{display:flex;align-items:center;justify-content:space-between;padding:24px 28px;background:linear-gradient(135deg,rgba(35,35,35,0.5),rgba(20,20,20,0.6));backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border:1px solid rgba(255,255,255,0.06);border-top-color:rgba(255,255,255,0.1);border-radius:12px;text-decoration:none;color:var(--cream);box-shadow:0 4px 20px rgba(0,0,0,0.3),inset 0 1px 0 rgba(255,255,255,0.04);transition:all 0.3s}.contact-cta:hover{border-color:rgba(255,255,255,0.15);transform:translateY(-3px);box-shadow:0 16px 48px rgba(0,0,0,0.5),inset 0 1px 0 rgba(255,255,255,0.08)}
-.resume-overlay{position:fixed;inset:0;z-index:9999;background:rgba(0,0,0,0.8);backdrop-filter:blur(8px);display:flex;align-items:center;justify-content:center;animation:fadeUp 0.3s ease}
-.resume-modal{width:90%;max-width:800px;height:85vh;background:var(--surface);border:1px solid var(--border);border-radius:12px;display:flex;flex-direction:column;overflow:hidden}
-.resume-header{display:flex;justify-content:space-between;align-items:center;padding:14px 20px;border-bottom:1px solid var(--border)}
-.resume-dl{font-family:'DM Sans',sans-serif;font-size:12px;color:var(--cream-dim);text-decoration:none;display:inline-flex;align-items:center;gap:4px;padding:6px 14px;border:1px solid var(--border);border-radius:6px;transition:all 0.2s}.resume-dl:hover{color:var(--cream);border-color:var(--cream-dim)}
-.resume-close{background:none;border:none;color:var(--cream-dim);font-size:24px;cursor:pointer;padding:0 4px;line-height:1;transition:color 0.2s}.resume-close:hover{color:var(--cream)}
+@keyframes grainShift{0%,100%{transform:translate(0)}25%{transform:translate(-3%,-8%)}50%{transform:translate(5%,3%)}75%{transform:translate(-7%,6%)}}
+@keyframes pulseDot{0%,100%{transform:scale(1);opacity:1;box-shadow:0 0 0 0 rgba(164,210,130,0.5)}50%{transform:scale(1.2);opacity:0.85;box-shadow:0 0 0 8px rgba(164,210,130,0)}}
+@keyframes ticker{0%{transform:translateX(0)}100%{transform:translateX(-33.333%)}}
+@keyframes hintPulse{0%,100%{opacity:0.5}50%{opacity:1}}
+@keyframes preloaderFill{0%{width:0}60%{width:80%}100%{width:100%}}
+@keyframes scrollLine{0%{transform:scaleY(0);transform-origin:top}50%{transform:scaleY(1);transform-origin:top}51%{transform-origin:bottom}100%{transform:scaleY(0);transform-origin:bottom}}
+@keyframes mobileIn{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+@keyframes preloaderNameIn{from{opacity:0;letter-spacing:0.4em}to{opacity:1;letter-spacing:0.04em}}
+
+/* ─── GRAIN ─── */
+.grain{position:fixed;inset:-10%;pointer-events:none;z-index:9997;opacity:0.28;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.045'/%3E%3C/svg%3E");animation:grainShift 5s steps(8) infinite;mix-blend-mode:overlay}
+
+/* ─── PRELOADER ─── */
+.preloader{position:fixed;inset:0;z-index:10000;background:var(--bg);display:flex;align-items:center;justify-content:center}
+.preloader-inner{display:flex;flex-direction:column;align-items:center;gap:22px}
+.preloader-name{font-family:'Bebas Neue';font-size:28px;letter-spacing:0.04em;color:var(--cream);animation:preloaderNameIn 1.2s cubic-bezier(0.22,1,0.36,1)}
+.preloader-name em{font-size:26px;color:var(--cream-dim);margin-right:4px}
+.preloader-bar{width:180px;height:1px;background:rgba(255,255,255,0.08);overflow:hidden}
+.preloader-fill{height:100%;background:var(--cream);animation:preloaderFill 2s cubic-bezier(0.22,1,0.36,1) forwards}
+.preloader-tag{font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:0.3em;color:var(--mid)}
+
+/* ─── SCROLL PROGRESS ─── */
+.scroll-prog-wrap{position:fixed;top:0;left:0;width:100%;height:2px;background:transparent;z-index:1002}
+.scroll-prog{height:100%;background:linear-gradient(90deg,var(--cream-dim),var(--cream));transition:width 0.08s linear}
+
+/* ─── PILL NAV ─── */
+.pill-nav{position:fixed;top:16px;left:50%;transform:translateX(-50%);z-index:1000;display:flex;align-items:center;gap:20px;padding:10px 24px;background:var(--glass-bg);backdrop-filter:blur(36px) saturate(1.8);-webkit-backdrop-filter:blur(36px) saturate(1.8);border:1px solid var(--glass-bd);border-top-color:var(--glass-bd-top);border-radius:999px;box-shadow:var(--glass-shadow);transition:opacity 0.4s,transform 0.4s}
+.nav-brand{font-family:'Bebas Neue';font-size:20px;letter-spacing:0.04em;cursor:pointer;color:var(--cream);transition:opacity 0.2s}
+.nav-brand:hover{opacity:0.7}
+.nav-pills{display:flex;gap:4px}
+.pill-btn{background:none;border:none;cursor:pointer;font-family:'DM Sans';font-size:13px;font-weight:500;color:var(--cream-dim);padding:6px 14px;border-radius:999px;transition:all 0.25s}
+.pill-btn:hover{color:var(--cream);background:rgba(255,255,255,0.08)}
+.nav-time{font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--cream);font-weight:500;white-space:nowrap;letter-spacing:0.02em}
+
+.resume-btn{position:fixed;top:16px;right:20px;z-index:1001;display:inline-flex;align-items:center;gap:6px;padding:10px 18px;font-family:'DM Sans',sans-serif;font-size:13px;font-weight:600;color:var(--cream);background:var(--glass-bg);backdrop-filter:blur(36px) saturate(1.8);-webkit-backdrop-filter:blur(36px) saturate(1.8);border:1px solid var(--glass-bd);border-top-color:var(--glass-bd-top);border-radius:999px;box-shadow:var(--glass-shadow);transition:all 0.3s;letter-spacing:0.02em;cursor:pointer}
+.resume-btn:hover{background:var(--glass-bg-strong);border-color:var(--border-2);box-shadow:var(--glass-shadow-hover);transform:translateY(-2px)}
+
+/* ─── MOBILE NAV ─── */
+.mobile-nav{display:none;position:fixed;top:0;left:0;right:0;z-index:1000;padding:16px 24px;justify-content:space-between;align-items:center;background:linear-gradient(180deg,rgba(14,14,14,0.85),rgba(7,7,7,0.75));backdrop-filter:blur(36px) saturate(1.8);-webkit-backdrop-filter:blur(36px) saturate(1.8);border-bottom:1px solid var(--border);transition:opacity 0.4s}
+.mob-btn{background:none;border:1px solid var(--border-2);border-radius:6px;padding:8px 14px;color:var(--cream);cursor:pointer;font-size:12px;font-family:'DM Sans';letter-spacing:0.08em}
+.mobile-overlay{position:fixed;inset:0;z-index:999;background:rgba(7,7,7,0.97);backdrop-filter:blur(20px);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:24px}
+.mobile-link{background:none;border:none;cursor:pointer;font-family:'Bebas Neue';font-size:42px;color:var(--cream);letter-spacing:0.06em;text-transform:uppercase;opacity:0;animation:mobileIn 0.5s cubic-bezier(0.22,1,0.36,1) forwards}
+
+/* ══════════════════════════════════════════════
+   HERO
+   ══════════════════════════════════════════════ */
+.hero{min-height:100vh;display:flex;flex-direction:column;padding:140px 40px 40px;position:relative;overflow:hidden;transition:opacity 0.1s linear,transform 0.1s linear;will-change:transform,opacity;z-index:5}
+.hero-inner{flex:1;max-width:1400px;width:100%;margin:0 auto;display:flex;flex-direction:column;gap:36px;position:relative;z-index:2}
+
+.hero-status{display:inline-flex;align-items:center;gap:10px;padding:8px 16px;background:rgba(20,20,20,0.5);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border:1px solid var(--border);border-radius:999px;font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:0.1em;color:var(--cream-dim);align-self:flex-start}
+.hero-status em{font-size:13px;color:var(--cream);margin:0 2px;font-style:italic}
+.status-dot{width:7px;height:7px;border-radius:50%;background:#a4d282;animation:pulseDot 2.2s ease-in-out infinite;display:inline-block}
+
+.hero-title-wrap{overflow:visible}
+.hero-title{font-family:'Bebas Neue',sans-serif;font-size:clamp(64px,16vw,220px);line-height:0.85;letter-spacing:-0.02em;color:var(--cream);text-transform:uppercase;margin:0;display:flex;flex-direction:column;gap:0}
+.htl-line{display:flex;overflow:hidden;align-items:baseline;gap:clamp(10px,2vw,28px)}
+.htl-word{display:inline-block}
+
+.hero-meta{display:flex;align-items:flex-end;justify-content:space-between;gap:40px;margin-top:8px}
+.hero-meta-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:32px;flex:1;max-width:640px}
+.hm-col{display:flex;flex-direction:column;gap:8px}
+.hm-label{font-family:'Instrument Serif',serif;font-style:italic;font-size:14px;color:var(--cream-dim);letter-spacing:-0.01em}
+.hm-val{font-family:'DM Sans';font-size:14px;color:var(--cream);font-weight:500;line-height:1.4}
+.hero-globe-spacer{flex-shrink:0;width:clamp(200px,22vw,340px);height:clamp(200px,22vw,340px)}
+
+.hero-ctas{display:flex;gap:14px;flex-wrap:wrap;margin-top:4px}
+.btn-primary{padding:15px 30px;background:var(--cream);color:var(--dark);border:none;border-radius:999px;cursor:pointer;font-family:'DM Sans';font-size:14px;font-weight:600;transition:transform 0.2s cubic-bezier(0.22,1,0.36,1),box-shadow 0.3s;display:inline-flex;align-items:center;gap:8px;letter-spacing:0.02em}
+.btn-primary:hover{transform:translateY(-2px);box-shadow:0 12px 32px rgba(232,228,222,0.2)}
+.btn-primary .arr{transition:transform 0.3s}
+.btn-primary:hover .arr{transform:translateX(4px)}
+.btn-ghost{padding:15px 30px;background:rgba(20,20,20,0.4);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);color:var(--cream);border:1px solid var(--border-2);border-radius:999px;cursor:pointer;font-family:'DM Sans';font-size:14px;font-weight:500;transition:all 0.3s;letter-spacing:0.02em}
+.btn-ghost:hover{border-color:var(--cream-dim);background:rgba(30,30,30,0.5)}
+
+/* ─── HERO FLY-IN (scroll-driven intro) ─── */
+/* Content is hidden while the globe owns the screen, then gets "thrown" into place as the user scrolls.
+   The --intro-prog / --intro-inv CSS vars are set on the Portfolio root. */
+.hero-fly{will-change:transform,opacity;transition:none}
+.hero-fly-tl    { transform: translate3d(calc(-32vw * var(--intro-inv, 1)), calc(-28vh * var(--intro-inv, 1)), 0) rotate(calc(-10deg * var(--intro-inv, 1))); opacity: var(--intro-prog, 1) }
+.hero-fly-bl    { transform: translate3d(calc(-28vw * var(--intro-inv, 1)), calc(30vh * var(--intro-inv, 1)), 0) rotate(calc(6deg * var(--intro-inv, 1))); opacity: var(--intro-prog, 1) }
+.hero-fly-br    { transform: translate3d(calc(32vw * var(--intro-inv, 1)), calc(24vh * var(--intro-inv, 1)), 0) rotate(calc(-6deg * var(--intro-inv, 1))); opacity: var(--intro-prog, 1) }
+.hero-fly-down  { transform: translate3d(0, calc(30vh * var(--intro-inv, 1)), 0); opacity: var(--intro-prog, 1) }
+
+/* Hero title just fades in during the second half of the intro — it's replaced visually by the .name-stage overlay until then */
+.hero-title-fade{will-change:opacity;opacity:clamp(0, calc((var(--intro-prog, 1) - 0.55) * 2.4), 1)}
+
+/* ─── NAME STAGE — fixed overlay that morphs from huge-center to left-aligned hero title position ─── */
+.name-stage{
+  position:fixed;top:0;left:0;z-index:6;pointer-events:none;
+  font-family:'Bebas Neue',sans-serif;
+  font-size:clamp(64px,16vw,220px);line-height:0.85;letter-spacing:-0.02em;
+  color:var(--cream);text-transform:uppercase;
+  display:flex;flex-direction:column;gap:0;
+  will-change:transform,opacity;
+  opacity:var(--intro-inv, 1);
+  transform:
+    translate3d(
+      calc(40px + (50vw - 40px) * var(--intro-inv, 1)),
+      calc(220px + (50vh - 220px) * var(--intro-inv, 1)),
+      0
+    )
+    translate(
+      calc(-50% * var(--intro-inv, 1)),
+      calc(-50% * var(--intro-inv, 1))
+    )
+    scale(calc(1 + 0.28 * var(--intro-inv, 1)));
+  transform-origin:center center;
+  /* Strong dark halo so the name stays readable over both bright continents and dark oceans */
+  text-shadow:
+    0 6px 40px rgba(0,0,0,0.9),
+    0 2px 14px rgba(0,0,0,0.75),
+    0 0 2px rgba(0,0,0,0.5);
+}
+.name-stage .name-line{display:block}
+
+/* ─── GLOBE STAGE (fixed, intro-driven) ─── */
+.globe-stage{position:fixed;inset:0;z-index:2;pointer-events:none;display:flex;align-items:center;justify-content:center;transition:opacity 0.3s ease}
+.globe-stage-inner{position:absolute;left:50%;top:50%;width:min(125vh,125vw);height:min(125vh,125vw);will-change:transform;transform-origin:center center}
+.globe-stage-inner .globe-wrap{width:100%!important;height:100%!important;opacity:1!important}
+/* Fallback rule for the hero-slot globe (kept for any stale markup) */
+.globe-wrap{width:clamp(200px,22vw,340px);height:clamp(200px,22vw,340px);opacity:0.85}
+
+.globe-intro-hint{position:absolute;bottom:44px;left:50%;transform:translateX(-50%);display:flex;flex-direction:column;align-items:center;gap:14px;font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:0.35em;color:var(--cream-dim);text-transform:uppercase;transition:opacity 0.4s ease,color 0.3s ease;background:none;border:none;cursor:pointer;padding:8px 16px}
+.globe-intro-hint:hover{color:var(--cream)}
+.gih-line{display:inline-block;width:1px;height:40px;background:linear-gradient(180deg,transparent,var(--cream-dim));animation:scrollLine 2.4s ease-in-out infinite}
+
+/* ─── HERO BOTTOM ─── */
+.hero-bottom{position:relative;z-index:2;display:flex;flex-direction:column;gap:32px;padding-top:32px}
+.hero-scroll-hint{display:inline-flex;align-items:center;gap:12px;font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:0.3em;color:var(--cream-dim);text-transform:uppercase;background:none;border:none;padding:8px 4px;cursor:pointer;transition:color 0.3s ease,gap 0.3s ease}
+.hero-scroll-hint:hover{color:var(--cream);gap:18px}
+.hero-scroll-hint .scroll-arrow{font-size:14px;line-height:1;display:inline-block;animation:scrollArrowBob 2.2s ease-in-out infinite;letter-spacing:0;transform-origin:center}
+@keyframes scrollArrowBob{0%,100%{transform:translateY(0)}50%{transform:translateY(4px)}}
+.scroll-line{display:inline-block;width:1px;height:36px;background:var(--cream-dim);animation:scrollLine 2.5s ease-in-out infinite}
+.hero-ticker{overflow:hidden;border-top:1px solid var(--border);border-bottom:1px solid var(--border);padding:16px 0;margin:0 -40px}
+.hero-ticker-track{display:flex;width:max-content;animation:ticker 50s linear infinite;gap:32px}
+.ticker-item{font-family:'Bebas Neue';font-size:22px;letter-spacing:0.04em;color:var(--cream);text-transform:uppercase;display:inline-flex;align-items:center;gap:32px;white-space:nowrap}
+.ticker-item em{font-family:'Bebas Neue';font-style:normal}
+.hero-ticker:hover .hero-ticker-track,.footer-ticker:hover .footer-ticker-track{animation-play-state:paused}
+.ticker-dot{color:var(--cream-dim);font-size:14px}
+
+/* ══════════════════════════════════════════════
+   SECTIONS
+   ══════════════════════════════════════════════ */
+.section{padding:130px 40px;max-width:1400px;margin:0 auto;position:relative;z-index:5}
+.section-head{display:grid;grid-template-columns:80px 1fr;gap:32px;margin-bottom:64px;align-items:start}
+.section-num{font-family:'Instrument Serif',serif;font-style:italic;font-size:18px;color:var(--cream-dim);padding-top:6px;letter-spacing:-0.01em}
+.section-labels{display:flex;flex-direction:column;gap:16px}
+.s-tag{font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:0.22em;text-transform:uppercase;color:var(--cream-dim)}
+.s-head{font-family:'Bebas Neue',sans-serif;font-size:clamp(44px,7vw,88px);line-height:0.92;letter-spacing:-0.005em;text-transform:uppercase;color:var(--cream)}
+.s-head em{font-family:'Instrument Serif',serif;font-style:italic;text-transform:none;font-size:0.88em;color:var(--cream-dim);font-weight:400;letter-spacing:-0.02em}
+.s-head-big{font-family:'Bebas Neue',sans-serif;font-size:clamp(64px,11vw,160px);line-height:0.9;letter-spacing:-0.01em;text-transform:uppercase;color:var(--cream)}
+.s-head-big em{font-family:'Instrument Serif',serif;font-style:italic;text-transform:none;font-size:0.82em;color:var(--cream-dim);font-weight:400}
+
+/* About section — big editorial heading like the reference image */
+.section-about{padding-top:160px}
+.section-head-tall{margin-bottom:96px}
+.about-head{font-size:clamp(72px,13vw,190px);line-height:0.88;letter-spacing:-0.015em}
+
+/* ─── ABOUT ─── */
+.about-grid{display:grid;grid-template-columns:1.1fr 0.9fr;gap:80px;align-items:start}
+.about-text p{font-size:16px;color:var(--cream-dim);line-height:1.8;margin-bottom:24px;max-width:540px}
+.about-text p em{font-size:17px;color:var(--cream)}
+.counters{margin-top:44px;display:flex;gap:56px;flex-wrap:wrap}
+.counter-item{display:flex;flex-direction:column;gap:6px}
+.count-num{font-family:'Bebas Neue';font-size:52px;line-height:1;color:var(--cream);letter-spacing:0.01em}
+.counter-label{font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--mid);letter-spacing:0.18em;text-transform:uppercase}
+
+.about-photo-wrap{position:relative}
+.about-photo{border-radius:4px;overflow:hidden;border:1px solid var(--border);aspect-ratio:3/4;position:relative}
+.about-photo img{width:100%;height:120%;object-fit:cover;filter:grayscale(30%) contrast(1.12) brightness(0.88);transition:transform 0.15s linear;will-change:transform}
+.about-photo::after{content:'';position:absolute;inset:0;background:linear-gradient(to bottom,transparent 60%,rgba(0,0,0,0.4));pointer-events:none}
+.photo-caption{position:absolute;bottom:-28px;left:0;right:0;display:flex;justify-content:space-between;font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--cream-dim);letter-spacing:0.08em;text-transform:uppercase;padding:0 4px}
+.photo-caption em{font-family:'Instrument Serif',serif;font-style:italic;font-size:13px;text-transform:none;color:var(--cream)}
+
+/* ─── SKILLS ─── */
+.section-skills{padding:80px 0 120px}
+.section-skills .section-head{padding:0 40px;max-width:1400px;margin:0 auto 48px}
+.marquee-left,.marquee-right{overflow:hidden;margin-bottom:12px}
+.marquee-track{display:flex;flex-wrap:nowrap;width:max-content;gap:14px;align-items:center}
+.marquee-left .marquee-track{animation:marquee-left 50s linear infinite}
+.marquee-right .marquee-track{animation:marquee-right 50s linear infinite}
+.marquee-left:hover .marquee-track,.marquee-right:hover .marquee-track{animation-play-state:paused}
+.marquee-item{flex:0 0 auto;padding:13px 32px;border:1px solid var(--border);border-radius:999px;font-family:'JetBrains Mono',monospace;font-size:13px;color:var(--cream-dim);white-space:nowrap;transition:all 0.5s ease;background:var(--surface)}
+.marquee-track:has(.marquee-item:hover) .marquee-item{opacity:0.3;border-color:var(--border);color:var(--mid)}
+.marquee-track:has(.marquee-item:hover) .marquee-item:hover{opacity:1;color:var(--cream);border-color:rgba(232,228,222,0.4);background:rgba(232,228,222,0.08);box-shadow:0 0 24px rgba(232,228,222,0.12);transform:scale(1.08)}
+
+/* ══════════════════════════════════════════════
+   PROJECTS STACK CARDS
+   ══════════════════════════════════════════════ */
+.section-projects{padding:100px 40px 160px}
+.stack-hint{display:flex;align-items:center;gap:12px;margin-bottom:32px;font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:0.2em;color:var(--cream-dim);text-transform:uppercase}
+.scroll-line-h{display:inline-block;width:40px;height:1px;background:var(--cream-dim)}
+
+.stack-wrapper{position:relative}
+.stack-wrap{padding:0}
+.stack-card{
+  background:linear-gradient(140deg,rgba(26,26,28,0.88),rgba(14,14,16,0.92));
+  backdrop-filter:blur(28px) saturate(1.5);-webkit-backdrop-filter:blur(28px) saturate(1.5);
+  border:1px solid var(--border-2);
+  border-top-color:rgba(255,255,255,0.16);
+  border-left-color:rgba(255,255,255,0.12);
+  border-radius:20px;overflow:hidden;
+  box-shadow:0 30px 80px rgba(0,0,0,0.55),0 6px 20px rgba(0,0,0,0.35),inset 0 1px 0 rgba(255,255,255,0.09),inset 0 -1px 0 rgba(0,0,0,0.35);
+  transition:transform 0.12s linear,opacity 0.12s linear,filter 0.12s linear;
+  will-change:transform,opacity,filter;
+  position:relative;
+}
+.stack-card::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse 120% 60% at 50% 0%,rgba(255,255,255,0.05),transparent 60%);pointer-events:none;z-index:1}
+.stack-inner{display:grid;grid-template-columns:1fr 1fr;gap:0;min-height:min(78vh,620px);cursor:pointer;position:relative;z-index:2}
+.stack-inner.flipped{grid-template-columns:1fr 1fr}
+.stack-inner.flipped .stack-media{order:2}
+.stack-inner.flipped .stack-body{order:1;border-left:none;border-right:1px solid var(--border)}
+
+.stack-media{position:relative;overflow:hidden;background:var(--surface-2);min-height:400px;border-right:1px solid var(--border)}
+.stack-media img{width:100%;height:100%;object-fit:cover;display:block;transition:transform 0.8s cubic-bezier(0.22,1,0.36,1);will-change:transform}
+.stack-inner:hover .stack-media img{transform:scale(1.04)}
+.stack-media-blank{width:100%;height:100%;display:flex;align-items:center;justify-content:center}
+.stack-media-blank span{font-family:'Bebas Neue';font-size:clamp(80px,8vw,120px);color:rgba(255,255,255,0.08)}
+.stack-media-grad{position:absolute;inset:0;background:linear-gradient(135deg,transparent 60%,rgba(0,0,0,0.35));pointer-events:none}
+
+.stack-body{padding:48px 52px;display:flex;flex-direction:column;justify-content:center;gap:18px}
+.stack-top-row{display:flex;justify-content:space-between;align-items:center}
+.stack-num{font-family:'Instrument Serif',serif;font-style:italic;font-size:18px;color:var(--cream-dim);letter-spacing:-0.01em}
+.stack-period{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--mid);letter-spacing:0.1em}
+.stack-tag{font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:0.2em;text-transform:uppercase;color:var(--cream-dim);margin-top:-4px}
+.stack-title{font-family:'Bebas Neue';font-size:clamp(36px,4.2vw,58px);line-height:0.96;letter-spacing:-0.005em;color:var(--cream);text-transform:uppercase;margin:4px 0}
+.stack-desc{font-size:15px;color:var(--cream-dim);line-height:1.65;max-width:480px}
+.stack-chips{display:flex;flex-wrap:wrap;gap:6px;margin-top:4px}
+.stack-chip{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--cream-dim);padding:4px 10px;border:1px solid var(--border);border-radius:4px;background:rgba(255,255,255,0.02)}
+.stack-cta{display:inline-flex;align-items:center;gap:10px;margin-top:16px;font-family:'DM Sans';font-size:13px;font-weight:600;color:var(--cream);letter-spacing:0.04em;border-bottom:1px solid var(--cream-dim);padding-bottom:4px;width:fit-content;transition:gap 0.3s,border-color 0.3s}
+.stack-inner:hover .stack-cta{gap:14px;border-color:var(--cream)}
+.stack-arrow{transition:transform 0.3s cubic-bezier(0.22,1,0.36,1);display:inline-block}
+.stack-inner:hover .stack-arrow{transform:translate(3px,-3px)}
+
+/* ══════════════════════════════════════════════
+   EXPERIENCE
+   ══════════════════════════════════════════════ */
+.exp-list{display:flex;flex-direction:column;gap:8px}
+.exp-card-v2{display:grid;grid-template-columns:200px 1fr;gap:48px;padding:32px 0;border-top:1px solid var(--border);transition:background 0.3s,padding-left 0.4s cubic-bezier(0.22,1,0.36,1)}
+.exp-card-v2:hover{padding-left:20px}
+.exp-card-v2:last-child{border-bottom:1px solid var(--border)}
+.exp-period{font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--mid);letter-spacing:0.06em}
+.exp-role-line{display:flex;align-items:baseline;gap:14px;margin-bottom:12px;flex-wrap:wrap}
+.exp-role-line h4{font-family:'Bebas Neue';font-size:30px;letter-spacing:0.01em;color:var(--cream);font-weight:400;text-transform:uppercase}
+.exp-sep{color:var(--cream-dim);font-size:18px}
+.exp-org{font-family:'Instrument Serif',serif;font-style:italic;font-size:22px;color:var(--cream-dim)}
+.exp-body p{font-size:15px;color:var(--cream-dim);line-height:1.7;max-width:700px}
+
+/* ══════════════════════════════════════════════
+   CONTACT
+   ══════════════════════════════════════════════ */
+.section-contact{padding:120px 40px 80px}
+.contact-grid-v2{display:grid;grid-template-columns:1.1fr 0.9fr;gap:40px;align-items:stretch}
+.contact-cta-v2{display:flex;align-items:center;gap:20px;padding:36px;background:var(--glass-bg);backdrop-filter:blur(28px) saturate(1.6);-webkit-backdrop-filter:blur(28px) saturate(1.6);border:1px solid var(--glass-bd);border-top-color:var(--glass-bd-top);border-left-color:rgba(255,255,255,0.12);border-radius:18px;text-decoration:none;color:var(--cream);box-shadow:var(--glass-shadow);transition:all 0.4s cubic-bezier(0.22,1,0.36,1);height:100%;position:relative;overflow:hidden}
+.contact-cta-v2::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse 150% 80% at 20% -20%,rgba(255,255,255,0.08),transparent 50%);pointer-events:none}
+.contact-cta-v2:hover{border-color:var(--border-2);transform:translateY(-4px);box-shadow:var(--glass-shadow-hover)}
+.cta-ico-wrap{width:56px;height:56px;border-radius:14px;background:rgba(232,228,222,0.06);display:flex;align-items:center;justify-content:center;flex-shrink:0;color:var(--cream);border:1px solid rgba(255,255,255,0.06)}
+.cta-body{flex:1}
+.cta-label{font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:0.12em;text-transform:uppercase;color:var(--cream-dim);margin-bottom:6px}
+.cta-val{font-family:'DM Sans';font-size:20px;font-weight:500;color:var(--cream)}
+.cta-arrow{color:var(--cream-dim);transition:transform 0.4s cubic-bezier(0.22,1,0.36,1)}
+.contact-cta-v2:hover .cta-arrow{transform:translate(4px,-4px);color:var(--cream)}
+
+.contact-socials{display:flex;flex-direction:column;gap:10px;height:100%}
+.contact-link-v2{display:flex;align-items:center;gap:16px;padding:18px 22px;background:var(--glass-bg);backdrop-filter:blur(24px) saturate(1.6);-webkit-backdrop-filter:blur(24px) saturate(1.6);border:1px solid var(--glass-bd);border-top-color:var(--glass-bd-top);border-radius:12px;text-decoration:none;color:var(--cream);box-shadow:0 6px 24px rgba(0,0,0,0.35),inset 0 1px 0 rgba(255,255,255,0.06);transition:all 0.35s cubic-bezier(0.22,1,0.36,1);flex:1}
+.contact-link-v2:hover{border-color:var(--border-2);transform:translateY(-2px) translateX(4px);box-shadow:0 12px 40px rgba(0,0,0,0.5),inset 0 1px 0 rgba(255,255,255,0.1)}
+.cl-ico{width:38px;height:38px;border-radius:10px;background:rgba(232,228,222,0.04);display:flex;align-items:center;justify-content:center;color:var(--cream-dim);flex-shrink:0;border:1px solid var(--border)}
+.contact-link-v2:hover .cl-ico{color:var(--cream)}
+.cl-body{flex:1}
+.cl-label{font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:0.14em;text-transform:uppercase;color:var(--mid)}
+.cl-val{font-family:'DM Sans';font-size:15px;font-weight:500;color:var(--cream);margin-top:3px}
+.cl-arrow{color:var(--mid);opacity:0.6;transition:all 0.3s}
+.contact-link-v2:hover .cl-arrow{color:var(--cream);opacity:1;transform:translate(3px,-3px)}
+
+/* ══════════════════════════════════════════════
+   FOOTER
+   ══════════════════════════════════════════════ */
+.footer-v2{border-top:1px solid var(--border);padding:0 0 32px;overflow:hidden;position:relative;z-index:1}
+.footer-huge{padding:60px 40px 40px;max-width:1400px;margin:0 auto;font-family:'Bebas Neue';font-size:clamp(80px,18vw,280px);line-height:0.88;letter-spacing:-0.01em;color:var(--cream);text-transform:uppercase;text-align:left}
+.footer-huge em{font-family:'Instrument Serif',serif;font-style:italic;color:var(--cream-dim);text-transform:none;font-size:0.82em;font-weight:400}
+.footer-ticker{overflow:hidden;border-top:1px solid var(--border);border-bottom:1px solid var(--border);padding:14px 0;margin-bottom:24px}
+.footer-ticker-track{display:flex;width:max-content;animation:ticker 55s linear infinite;gap:32px}
+.footer-meta{padding:0 40px;max-width:1400px;margin:0 auto;display:flex;justify-content:space-between;font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--mid);letter-spacing:0.08em;flex-wrap:wrap;gap:20px}
+
+/* ══════════════════════════════════════════════
+   PROJECT DETAIL
+   ══════════════════════════════════════════════ */
+.project-detail{min-height:100vh;background:var(--bg);color:var(--cream);padding:120px 40px 80px;position:relative;z-index:1}
+.pd-inner{max-width:1000px;margin:0 auto}
+.pd-back{display:flex;align-items:center;gap:10px;background:none;border:none;color:var(--cream-dim);cursor:pointer;font-family:'DM Sans';font-size:14px;margin-bottom:48px;transition:color 0.3s,gap 0.3s;padding:8px 0}
+.pd-back:hover{color:var(--cream);gap:14px}
+.pd-meta{display:flex;align-items:center;gap:10px;font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--cream-dim);letter-spacing:0.15em;margin-bottom:16px;text-transform:uppercase}
+.pd-sep{color:var(--mid)}
+.pd-title{font-family:'Bebas Neue';font-size:clamp(48px,8vw,96px);line-height:0.94;letter-spacing:-0.005em;margin-bottom:48px;text-transform:uppercase}
+.pd-hero{width:100%;aspect-ratio:16/9;border-radius:18px;overflow:hidden;margin-bottom:60px;border:1px solid var(--border);background:var(--surface)}
+.pd-hero img{width:100%;height:100%;object-fit:cover;display:block}
+.pd-hero-blank{width:100%;height:100%;display:flex;align-items:center;justify-content:center;font-family:'Bebas Neue';font-size:24px;color:rgba(255,255,255,0.3)}
+.pd-grid{display:grid;grid-template-columns:1fr 280px;gap:60px;margin-bottom:60px}
+.pd-sec-head{font-family:'Bebas Neue';font-size:28px;margin-bottom:16px;text-transform:uppercase;letter-spacing:0.01em}
+.pd-sec-head.pd-small{font-size:20px}
+.pd-prose{font-size:16px;color:var(--cream-dim);line-height:1.8}
+.pd-chips{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:24px}
+.pd-chip{display:inline-block;padding:5px 14px;border:1px solid var(--border);border-radius:4px;font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--cream-dim)}
+.pd-link{display:inline-flex;align-items:center;gap:8px;padding:12px 24px;background:var(--cream);color:var(--dark);border-radius:8px;text-decoration:none;font-family:'DM Sans';font-size:14px;font-weight:600;transition:transform 0.3s,box-shadow 0.3s}
+.pd-link:hover{transform:translateY(-2px);box-shadow:0 10px 30px rgba(232,228,222,0.18)}
+.pd-gallery{display:flex;flex-direction:column;gap:24px}
+.pd-shot{width:100%;border-radius:14px;overflow:hidden;border:1px solid var(--border)}
+.pd-shot img{width:100%;display:block}
+.pd-empty{padding:60px;border:1px dashed var(--border);border-radius:12px;text-align:center;color:var(--mid)}
+.pd-empty p{font-family:'JetBrains Mono',monospace;font-size:13px}
+
+/* ══════════════════════════════════════════════
+   RESUME MODAL
+   ══════════════════════════════════════════════ */
+.resume-overlay{position:fixed;inset:0;z-index:9999;background:rgba(0,0,0,0.85);backdrop-filter:blur(10px);display:flex;align-items:center;justify-content:center;animation:fadeUp 0.35s ease;padding:20px}
+.resume-modal{width:100%;max-width:900px;height:88vh;background:var(--surface);border:1px solid var(--border-2);border-radius:14px;display:flex;flex-direction:column;overflow:hidden;box-shadow:0 30px 80px rgba(0,0,0,0.6)}
+.resume-header{display:flex;justify-content:space-between;align-items:center;padding:16px 22px;border-bottom:1px solid var(--border)}
+.resume-title{font-family:'Bebas Neue';font-size:20px;letter-spacing:0.04em;color:var(--cream)}
+.resume-title em{color:var(--cream-dim);font-size:18px}
+.resume-actions{display:flex;gap:10px;align-items:center}
+.resume-dl{font-family:'DM Sans';font-size:12px;color:var(--cream-dim);text-decoration:none;display:inline-flex;align-items:center;gap:4px;padding:7px 14px;border:1px solid var(--border-2);border-radius:999px;transition:all 0.2s}
+.resume-dl:hover{color:var(--cream);border-color:var(--cream-dim)}
+.resume-close{background:none;border:none;color:var(--cream-dim);font-size:26px;cursor:pointer;padding:0 4px;line-height:1;transition:color 0.2s}
+.resume-close:hover{color:var(--cream)}
 .resume-body{flex:1;overflow:hidden}
-.exp-card{border-left:2px solid var(--border);padding:0 0 48px 32px;position:relative}.exp-card::before{content:'';position:absolute;left:-5px;top:6px;width:8px;height:8px;border-radius:50%;background:var(--cream)}
+.resume-body iframe{width:100%;height:100%;border:none}
+
+/* ══════════════════════════════════════════════
+   MUSIC PLAYER (upgraded liquid glass)
+   ══════════════════════════════════════════════ */
 .music-wrap{position:fixed;bottom:20px;right:20px;z-index:998;display:flex;flex-direction:column;align-items:flex-end;gap:6px}
 .mp-hint{font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--cream-dim);letter-spacing:0.08em;padding:0 8px;animation:hintPulse 2.5s ease-in-out infinite}
-@keyframes hintPulse{0%,100%{opacity:0.5}50%{opacity:1}}
-.music-player{display:flex;align-items:center;gap:10px;padding:8px 12px 8px 8px;background:linear-gradient(135deg,rgba(40,40,40,0.55),rgba(20,20,20,0.65));backdrop-filter:blur(32px) saturate(1.6);-webkit-backdrop-filter:blur(32px) saturate(1.6);border:1px solid rgba(255,255,255,0.08);border-top-color:rgba(255,255,255,0.12);border-radius:12px;max-width:280px;box-shadow:0 8px 32px rgba(0,0,0,0.4),inset 0 1px 0 rgba(255,255,255,0.06)}
-.mp-cover{width:36px;height:36px;border-radius:6px;background:var(--surface) center/cover no-repeat;flex-shrink:0;cursor:pointer;position:relative;overflow:hidden}.mp-cover:hover .mp-play-icon{opacity:1}
+.music-player{display:flex;align-items:center;gap:10px;padding:8px 12px 8px 8px;background:var(--glass-bg);backdrop-filter:blur(36px) saturate(1.8);-webkit-backdrop-filter:blur(36px) saturate(1.8);border:1px solid var(--glass-bd);border-top-color:var(--glass-bd-top);border-radius:14px;max-width:280px;box-shadow:var(--glass-shadow)}
+.mp-cover{width:36px;height:36px;border-radius:8px;background:var(--surface) center/cover no-repeat;flex-shrink:0;cursor:pointer;position:relative;overflow:hidden}
+.mp-cover:hover .mp-play-icon{opacity:1}
 .mp-play-icon{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;background:rgba(0,0,0,0.5);opacity:0;transition:opacity 0.2s}
 .mp-info{flex:1;min-width:0;overflow:hidden}
-.mp-title{font-family:'DM Sans',sans-serif;font-size:11px;color:var(--cream);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;line-height:1.3}
+.mp-title{font-family:'DM Sans';font-size:11px;color:var(--cream);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;line-height:1.3}
 .mp-artist{font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--mid);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;line-height:1.3}
-.mp-progress{width:100%;height:2px;background:var(--border);border-radius:1px;margin-top:4px;cursor:pointer;position:relative}.mp-progress-fill{height:100%;background:var(--cream-dim);border-radius:1px;transition:width 0.3s linear}
+.mp-progress{width:100%;height:2px;background:var(--border);border-radius:1px;margin-top:4px;cursor:pointer;position:relative}
+.mp-progress-fill{height:100%;background:var(--cream-dim);border-radius:1px;transition:width 0.3s linear}
 .mp-controls{display:flex;align-items:center;gap:2px;flex-shrink:0}
-.mp-btn{background:none;border:none;cursor:pointer;padding:4px;display:flex;align-items:center;justify-content:center;opacity:0.6;transition:opacity 0.2s}.mp-btn:hover{opacity:1}
-.mp-vol-wrap{position:absolute;bottom:100%;right:0;margin-bottom:8px;padding:8px 12px;background:rgba(24,24,24,0.9);backdrop-filter:blur(16px);border:1px solid var(--border);border-radius:8px}
-.mp-vol-slider{-webkit-appearance:none;appearance:none;width:80px;height:3px;background:var(--border);border-radius:2px;outline:none}.mp-vol-slider::-webkit-slider-thumb{-webkit-appearance:none;width:10px;height:10px;border-radius:50%;background:var(--cream);cursor:pointer}
-.preloader{position:fixed;inset:0;z-index:10000;background:var(--bg);display:flex;align-items:center;justify-content:center}
-.preloader-bar{width:120px;height:2px;background:var(--border);border-radius:1px;overflow:hidden}
-.preloader-fill{height:100%;background:linear-gradient(90deg,var(--cream-dim),var(--cream));border-radius:1px;animation:preloaderFill 2s ease-in-out forwards}
-@keyframes preloaderFill{0%{width:0}60%{width:80%}100%{width:100%}}
-.back-to-top{position:fixed;bottom:24px;left:24px;z-index:998;width:40px;height:40px;border-radius:50%;background:linear-gradient(135deg,rgba(40,40,40,0.55),rgba(20,20,20,0.65));backdrop-filter:blur(32px) saturate(1.6);-webkit-backdrop-filter:blur(32px) saturate(1.6);border:1px solid rgba(255,255,255,0.08);border-top-color:rgba(255,255,255,0.12);box-shadow:0 8px 24px rgba(0,0,0,0.4),inset 0 1px 0 rgba(255,255,255,0.06);cursor:pointer;display:flex;align-items:center;justify-content:center;transition:opacity 0.3s,transform 0.3s,background 0.3s}.back-to-top:hover{background:linear-gradient(135deg,rgba(60,60,60,0.6),rgba(30,30,30,0.7));border-color:rgba(255,255,255,0.15)}
-@media(max-width:768px){.music-wrap{bottom:12px;right:12px}.music-player{max-width:240px}.mp-cover{width:32px;height:32px}.mp-hint{display:none}.back-to-top{bottom:14px;left:14px;width:36px;height:36px}}
-@media(max-width:768px){.pill-nav{display:none!important}.mobile-nav{display:flex!important}.about-grid{grid-template-columns:1fr!important}.projects-grid{grid-template-columns:1fr!important}.contact-grid{grid-template-columns:1fr!important}.globe-container{display:none!important}.hero-row{flex-direction:column}.resume-btn{display:none!important}.date-badge{display:none!important}}
+.mp-btn{background:none;border:none;cursor:pointer;padding:4px;display:flex;align-items:center;justify-content:center;opacity:0.6;transition:opacity 0.2s}
+.mp-btn:hover{opacity:1}
+.mp-vol-wrap{position:absolute;bottom:100%;right:0;margin-bottom:8px;padding:8px 12px;background:rgba(18,18,18,0.9);backdrop-filter:blur(20px);border:1px solid var(--border-2);border-radius:8px}
+.mp-vol-slider{-webkit-appearance:none;appearance:none;width:80px;height:3px;background:var(--border-2);border-radius:2px;outline:none}
+.mp-vol-slider::-webkit-slider-thumb{-webkit-appearance:none;width:10px;height:10px;border-radius:50%;background:var(--cream);cursor:pointer}
+
+/* ─── BACK TO TOP ─── */
+.back-to-top{position:fixed;bottom:24px;left:24px;z-index:998;width:40px;height:40px;border-radius:50%;background:var(--glass-bg);backdrop-filter:blur(32px) saturate(1.7);-webkit-backdrop-filter:blur(32px) saturate(1.7);border:1px solid var(--glass-bd);border-top-color:var(--glass-bd-top);box-shadow:var(--glass-shadow);cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all 0.35s cubic-bezier(0.22,1,0.36,1)}
+.back-to-top:hover{background:var(--glass-bg-strong);border-color:var(--border-2);transform:translateY(-3px);box-shadow:var(--glass-shadow-hover)}
+
+/* ══════════════════════════════════════════════
+   MOBILE / RESPONSIVE
+   ══════════════════════════════════════════════ */
+@media(max-width:968px){
+  .hero{padding:120px 24px 40px}
+  .hero-meta{flex-direction:column;align-items:flex-start;gap:32px}
+  .hero-meta-grid{grid-template-columns:repeat(3,1fr);gap:20px;width:100%}
+  .hero-globe-col,.hero-globe-spacer{display:none!important}
+  .globe-stage{display:none!important}
+  .name-stage{display:none!important}
+  .hero-title-fade{opacity:1!important}
+  .hero-fly{transform:none!important;opacity:1!important}
+  .hero-ticker{margin:0 -24px}
+  .about-grid{grid-template-columns:1fr!important;gap:60px}
+  .stack-inner{grid-template-columns:1fr!important;min-height:auto}
+  .stack-inner.flipped .stack-body{order:2;border-right:none;border-top:1px solid var(--border)}
+  .stack-inner.flipped .stack-media{order:1}
+  .stack-media{min-height:280px;border-right:none;border-bottom:1px solid var(--border)}
+  .stack-body{padding:32px 28px}
+  .section-head{grid-template-columns:60px 1fr;gap:16px;margin-bottom:40px}
+  .section{padding:90px 24px}
+  .section-skills{padding:60px 0 90px}
+  .section-skills .section-head{padding:0 24px}
+  .section-projects{padding:90px 24px 120px}
+  .exp-card-v2{grid-template-columns:1fr;gap:12px;padding:24px 0}
+  .exp-card-v2:hover{padding-left:8px}
+  .contact-grid-v2{grid-template-columns:1fr;gap:24px}
+  .footer-huge{padding:48px 24px 32px}
+  .footer-meta{padding:0 24px}
+}
+@media(max-width:640px){
+  .hero-status{font-size:10px;padding:7px 12px}
+  .counters{gap:32px}
+  .pd-grid{grid-template-columns:1fr;gap:40px}
+}
+@media(max-width:768px){
+  .music-wrap{bottom:12px;right:12px}
+  .music-player{max-width:240px}
+  .mp-cover{width:32px;height:32px}
+  .mp-hint{display:none}
+  .back-to-top{bottom:14px;left:14px;width:36px;height:36px}
+  .pill-nav{display:none!important}
+  .mobile-nav{display:flex!important}
+  .resume-btn{display:none!important}
+}
 @media(min-width:769px){.mobile-nav{display:none!important}}
 `;

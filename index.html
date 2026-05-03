@@ -2,128 +2,366 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Ritwik Kumar</title>
-    <style>* { margin: 0; padding: 0; } body { background: #0f0f0f; }</style>
+    <title>Ritwik.</title>
+    <meta name="description" content="Ritwik Kumar — Data Science & Business Systems student at SRMIST. Building with GNNs, ML, and full-stack systems." />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <style>
+      html, body {
+        margin: 0;
+        padding: 0;
+        background: #070707;
+        color: #e8e4de;
+        overflow-x: hidden;
+        font-family: "DM Sans", system-ui, -apple-system, sans-serif;
+        cursor: none;
+      }
+
+      /* ——— Ambient drifting orbs (replaces universe.jpg) ——— */
+      .ambient-stage {
+        position: fixed;
+        inset: 0;
+        z-index: 0;
+        pointer-events: none;
+        overflow: hidden;
+        background: radial-gradient(ellipse at 50% 0%, rgba(30, 26, 38, 0.35), transparent 60%), #070707;
+      }
+      .orb {
+        position: absolute;
+        border-radius: 50%;
+        filter: blur(120px);
+        mix-blend-mode: screen;
+        opacity: 0.55;
+        will-change: transform;
+      }
+      #orb-a {
+        width: 560px;
+        height: 560px;
+        left: -120px;
+        top: -100px;
+        background: radial-gradient(circle at 30% 30%, rgba(130, 88, 180, 0.65), rgba(70, 40, 120, 0) 70%);
+      }
+      #orb-b {
+        width: 640px;
+        height: 640px;
+        right: -160px;
+        top: 35%;
+        background: radial-gradient(circle at 40% 40%, rgba(60, 110, 180, 0.55), rgba(20, 40, 100, 0) 70%);
+      }
+      #orb-c {
+        width: 480px;
+        height: 480px;
+        left: 30%;
+        bottom: -120px;
+        background: radial-gradient(circle at 50% 50%, rgba(180, 70, 90, 0.45), rgba(100, 30, 50, 0) 70%);
+      }
+
+      /* Starfield — subtle twinkling universe */
+      #starfield {
+        position: absolute;
+        inset: 0;
+        width: 100%;
+        height: 100%;
+        opacity: 0.85;
+      }
+
+      /* ——— Fine grain noise layer ——— */
+      .grain-bg {
+        position: fixed;
+        inset: 0;
+        z-index: 1;
+        pointer-events: none;
+        opacity: 0.045;
+        mix-blend-mode: overlay;
+        background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='200' height='200'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/></filter><rect width='100%25' height='100%25' filter='url(%23n)'/></svg>");
+      }
+
+      /* ——— Cursor spotlight that softly follows mouse ——— */
+      #cursor-spot {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 640px;
+        height: 640px;
+        margin-left: -320px;
+        margin-top: -320px;
+        border-radius: 50%;
+        background: radial-gradient(
+          circle,
+          rgba(232, 228, 222, 0.08) 0%,
+          rgba(232, 228, 222, 0.04) 25%,
+          rgba(232, 228, 222, 0) 60%
+        );
+        pointer-events: none;
+        z-index: 2;
+        will-change: transform;
+        mix-blend-mode: screen;
+        transition: opacity 0.4s ease;
+        opacity: 0;
+      }
+      #cursor-spot.active { opacity: 1; }
+
+      /* ——— Vignette edge darkening ——— */
+      #vignette {
+        position: fixed;
+        inset: 0;
+        z-index: 3;
+        pointer-events: none;
+        background: radial-gradient(ellipse at center, transparent 40%, rgba(0, 0, 0, 0.55) 100%);
+      }
+
+      /* ——— Cursor trail canvas ——— */
+      #cursor-trail {
+        position: fixed;
+        inset: 0;
+        z-index: 9998;
+        pointer-events: none;
+      }
+
+      /* ——— Page transition overlay ——— */
+      .page-fade {
+        position: fixed;
+        inset: 0;
+        background: #070707;
+        z-index: 10000;
+        pointer-events: none;
+        opacity: 0;
+        transition: opacity 0.5s ease;
+      }
+      .page-fade.active {
+        opacity: 1;
+        pointer-events: all;
+      }
+
+      #root {
+        position: relative;
+        z-index: 10;
+      }
+
+      @media (hover: none), (pointer: coarse) {
+        html, body { cursor: auto; }
+        #cursor-spot, #cursor-trail { display: none; }
+      }
+    </style>
   </head>
   <body>
-    <!-- Dark particle network background -->
-    <canvas id="particles" style="position:fixed;top:0;left:0;width:100vw;height:100vh;pointer-events:none;z-index:0;"></canvas>
-    <!-- Cursor trail -->
-    <canvas id="cursor-trail" style="position:fixed;top:0;left:0;width:100vw;height:100vh;pointer-events:none;z-index:9998;"></canvas>
-    <!-- Page transition overlay -->
-    <div id="page-fade" style="position:fixed;inset:0;background:#0f0f0f;z-index:9990;opacity:0;pointer-events:none;transition:opacity 0.4s ease;"></div>
+    <!-- Ambient background stage -->
+    <div class="ambient-stage" aria-hidden="true">
+      <canvas id="starfield"></canvas>
+      <div class="orb" id="orb-a"></div>
+      <div class="orb" id="orb-b"></div>
+      <div class="orb" id="orb-c"></div>
+    </div>
+
+    <!-- Grain overlay -->
+    <div class="grain-bg" aria-hidden="true"></div>
+
+    <!-- Cursor spotlight -->
+    <div id="cursor-spot" aria-hidden="true"></div>
+
+    <!-- Vignette -->
+    <div id="vignette" aria-hidden="true"></div>
+
+    <!-- Cursor trail canvas -->
+    <canvas id="cursor-trail" aria-hidden="true"></canvas>
+
+    <!-- Page fade -->
+    <div class="page-fade" id="page-fade" aria-hidden="true"></div>
+
+    <!-- App root -->
     <div id="root"></div>
-    <script type="module" src="/src/main.jsx"></script>
+
     <script>
-    (function(){
-      /* ═══ DARK PARTICLE NETWORK ═══ */
-      var pc = document.getElementById("particles");
-      var pg = pc.getContext("2d");
-      var particles = [];
-      var NUM = 80;
-      var prevW = window.innerWidth, prevH = window.innerHeight;
-      function pResize(){
-        var dpr = window.devicePixelRatio || 1;
-        var w = window.innerWidth, h = window.innerHeight;
-        pc.width = w * dpr; pc.height = h * dpr;
-        pc.style.width = w + "px"; pc.style.height = h + "px";
-        pg.setTransform(dpr, 0, 0, dpr, 0, 0);
-        /* Rescale particle positions to new viewport */
-        if(prevW > 0 && prevH > 0){
-          var sx = w / prevW, sy = h / prevH;
-          for(var i = 0; i < particles.length; i++){
-            particles[i].x *= sx;
-            particles[i].y *= sy;
+      /* ══════════════════════════════════════════════
+         Starfield — tiny drifting + twinkling stars
+         ══════════════════════════════════════════════ */
+      (function () {
+        const canvas = document.getElementById("starfield");
+        if (!canvas) return;
+        const ctx = canvas.getContext("2d");
+        let w = 0, h = 0, dpr = window.devicePixelRatio || 1;
+        let stars = [];
+        let scrollOffset = 0;
+
+        function makeStars() {
+          const count = Math.min(360, Math.round((w * h) / 6500));
+          stars = [];
+          for (let i = 0; i < count; i++) {
+            stars.push({
+              x: Math.random() * w,
+              y: Math.random() * h,
+              r: Math.random() * 1.2 + 0.2,
+              a: Math.random() * 0.5 + 0.25,
+              tw: Math.random() * Math.PI * 2,
+              twSpeed: Math.random() * 0.004 + 0.001,
+              depth: Math.random() * 0.7 + 0.3, // parallax factor
+            });
           }
         }
-        prevW = w; prevH = h;
-      }
-      pResize(); window.addEventListener("resize", pResize);
-      for(var i=0; i<NUM; i++){
-        particles.push({
-          x: Math.random()*window.innerWidth,
-          y: Math.random()*window.innerHeight,
-          vx: (Math.random()-0.5)*0.3,
-          vy: (Math.random()-0.5)*0.3,
-          r: Math.random()*2.5+1.5
-        });
-      }
-      function drawParticles(){
-        var w = window.innerWidth, h = window.innerHeight;
-        pg.clearRect(0,0,w,h);
-        for(var i=0; i<NUM; i++){
-          var p = particles[i];
-          p.x += p.vx; p.y += p.vy;
-          if(p.x<0) p.x=w; if(p.x>w) p.x=0;
-          if(p.y<0) p.y=h; if(p.y>h) p.y=0;
-          pg.beginPath(); pg.arc(p.x, p.y, p.r, 0, Math.PI*2);
-          pg.fillStyle = "rgba(232,228,222,0.25)"; pg.fill();
-          for(var j=i+1; j<NUM; j++){
-            var q=particles[j], dx=p.x-q.x, dy=p.y-q.y, d=Math.sqrt(dx*dx+dy*dy);
-            if(d < 200){
-              pg.beginPath(); pg.moveTo(p.x,p.y); pg.lineTo(q.x,q.y);
-              pg.strokeStyle = "rgba(232,228,222,"+(0.12*(1-d/200))+")";
-              pg.lineWidth = 0.8; pg.stroke();
+
+        function resize() {
+          w = window.innerWidth;
+          h = window.innerHeight;
+          canvas.width = w * dpr;
+          canvas.height = h * dpr;
+          canvas.style.width = w + "px";
+          canvas.style.height = h + "px";
+          ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+          makeStars();
+        }
+        resize();
+        window.addEventListener("resize", resize);
+        window.addEventListener("scroll", () => { scrollOffset = window.scrollY; }, { passive: true });
+
+        function loop() {
+          ctx.clearRect(0, 0, w, h);
+          for (const s of stars) {
+            s.tw += s.twSpeed;
+            const twinkle = 0.55 + 0.45 * Math.sin(s.tw);
+            // Parallax: deeper stars drift slower with scroll
+            const py = (s.y - scrollOffset * 0.08 * s.depth) % h;
+            const yy = py < 0 ? py + h : py;
+            ctx.beginPath();
+            ctx.arc(s.x, yy, s.r, 0, Math.PI * 2);
+            ctx.fillStyle = `rgba(232,228,222,${s.a * twinkle})`;
+            ctx.fill();
+            // Occasional soft glow on larger stars
+            if (s.r > 1) {
+              ctx.beginPath();
+              ctx.arc(s.x, yy, s.r * 3, 0, Math.PI * 2);
+              ctx.fillStyle = `rgba(232,228,222,${s.a * twinkle * 0.08})`;
+              ctx.fill();
             }
           }
+          requestAnimationFrame(loop);
         }
-        requestAnimationFrame(drawParticles);
-      }
-      drawParticles();
+        loop();
+      })();
 
-      /* ═══ CURSOR TRAIL ═══ */
-      var cc = document.getElementById("cursor-trail");
-      var cg = cc.getContext("2d");
-      var trail = [];
-      var maxLen = 80;
-      var moving = false;
-      var moveTimer = null;
-      function cResize(){
-        var dpr = window.devicePixelRatio || 1;
-        var w = window.innerWidth, h = window.innerHeight;
-        cc.width = w * dpr; cc.height = h * dpr;
-        cc.style.width = w + "px"; cc.style.height = h + "px";
-        cg.setTransform(dpr, 0, 0, dpr, 0, 0);
-      }
-      cResize(); window.addEventListener("resize", cResize);
-      document.addEventListener("mousemove", function(e){
-        var x = e.clientX, y = e.clientY;
-        var last = trail.length ? trail[trail.length-1] : null;
-        if(!last || Math.abs(x-last.x)>1.5 || Math.abs(y-last.y)>1.5){
-          trail.push({x:x, y:y}); if(trail.length > maxLen) trail.shift();
-        }
-        moving = true; clearTimeout(moveTimer);
-        moveTimer = setTimeout(function(){ moving = false; }, 60);
-        if(x<6||x>window.innerWidth-6||y<6||y>window.innerHeight-6)
-          trail.splice(0, Math.min(10, trail.length));
-      });
-      function drawTrail(){
-        cg.clearRect(0, 0, window.innerWidth, window.innerHeight);
-        if(trail.length > 2) trail.splice(0, moving ? 1 : 3);
-        if(trail.length > 1){
-          var n = trail.length;
-          for(var i = 0; i < n - 1; i++){
-            var t = (i+1)/(n-1), a = trail[i], b = trail[i+1];
-            cg.beginPath(); cg.moveTo(a.x, a.y); cg.lineTo(b.x, b.y);
-            cg.strokeStyle = "rgba(255,255,255," + (0.1+t*0.75) + ")";
-            cg.lineWidth = 0.5 + t*3.5; cg.lineCap = "round"; cg.stroke();
+      /* ══════════════════════════════════════════════
+         Ambient orb drift — organic sin/cos motion
+         ══════════════════════════════════════════════ */
+      (function () {
+        const orbs = [
+          { el: document.getElementById("orb-a"), phase: 0, sx: 80, sy: 60, rx: 0.00022, ry: 0.00018 },
+          { el: document.getElementById("orb-b"), phase: 1.7, sx: 90, sy: 70, rx: 0.00017, ry: 0.00023 },
+          { el: document.getElementById("orb-c"), phase: 3.1, sx: 100, sy: 50, rx: 0.00025, ry: 0.00015 },
+        ];
+        let start = performance.now();
+        function loop(now) {
+          const t = now - start;
+          for (const o of orbs) {
+            if (!o.el) continue;
+            const x = Math.sin(t * o.rx + o.phase) * o.sx;
+            const y = Math.cos(t * o.ry + o.phase * 1.3) * o.sy;
+            o.el.style.transform = `translate3d(${x}px, ${y}px, 0)`;
           }
+          requestAnimationFrame(loop);
         }
-        requestAnimationFrame(drawTrail);
-      }
-      drawTrail();
+        requestAnimationFrame(loop);
+      })();
 
-      /* ═══ PAGE TRANSITION HELPER ═══ */
-      window._pageFade = function(callback){
-        var el = document.getElementById("page-fade");
-        el.style.opacity = "1"; el.style.pointerEvents = "all";
-        setTimeout(function(){
-          callback();
-          setTimeout(function(){ el.style.opacity = "0"; el.style.pointerEvents = "none"; }, 50);
-        }, 400);
-      };
-    })();
+      /* ══════════════════════════════════════════════
+         Cursor spotlight with lerp smoothing
+         ══════════════════════════════════════════════ */
+      (function () {
+        const spot = document.getElementById("cursor-spot");
+        if (!spot) return;
+        let tx = window.innerWidth / 2;
+        let ty = window.innerHeight / 2;
+        let cx = tx;
+        let cy = ty;
+        let active = false;
+
+        window.addEventListener("mousemove", (e) => {
+          tx = e.clientX;
+          ty = e.clientY;
+          if (!active) {
+            active = true;
+            spot.classList.add("active");
+          }
+        });
+        window.addEventListener("mouseleave", () => {
+          active = false;
+          spot.classList.remove("active");
+        });
+
+        function loop() {
+          cx += (tx - cx) * 0.12;
+          cy += (ty - cy) * 0.12;
+          spot.style.transform = `translate3d(${cx}px, ${cy}px, 0)`;
+          requestAnimationFrame(loop);
+        }
+        loop();
+      })();
+
+      /* ══════════════════════════════════════════════
+         Cursor trail — small particles following cursor
+         ══════════════════════════════════════════════ */
+      (function () {
+        const canvas = document.getElementById("cursor-trail");
+        if (!canvas) return;
+        const ctx = canvas.getContext("2d");
+        let w = (canvas.width = window.innerWidth);
+        let h = (canvas.height = window.innerHeight);
+        let dpr = window.devicePixelRatio || 1;
+
+        function resize() {
+          w = window.innerWidth;
+          h = window.innerHeight;
+          canvas.width = w * dpr;
+          canvas.height = h * dpr;
+          canvas.style.width = w + "px";
+          canvas.style.height = h + "px";
+          ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+        }
+        resize();
+        window.addEventListener("resize", resize);
+
+        const dots = [];
+        const MAX = 22;
+        let mx = -999;
+        let my = -999;
+
+        window.addEventListener("mousemove", (e) => {
+          mx = e.clientX;
+          my = e.clientY;
+          dots.push({ x: mx, y: my, life: 1 });
+          if (dots.length > MAX) dots.shift();
+        });
+
+        function draw() {
+          ctx.clearRect(0, 0, w, h);
+          // Main dot
+          if (mx > -100) {
+            ctx.beginPath();
+            ctx.arc(mx, my, 4, 0, Math.PI * 2);
+            ctx.fillStyle = "rgba(232,228,222,0.9)";
+            ctx.fill();
+            ctx.beginPath();
+            ctx.arc(mx, my, 10, 0, Math.PI * 2);
+            ctx.strokeStyle = "rgba(232,228,222,0.18)";
+            ctx.lineWidth = 1;
+            ctx.stroke();
+          }
+          // Trailing particles
+          for (let i = 0; i < dots.length; i++) {
+            const d = dots[i];
+            d.life *= 0.92;
+            if (d.life < 0.04) continue;
+            ctx.beginPath();
+            ctx.arc(d.x, d.y, 2.5 * d.life, 0, Math.PI * 2);
+            ctx.fillStyle = `rgba(232,228,222,${d.life * 0.5})`;
+            ctx.fill();
+          }
+          requestAnimationFrame(draw);
+        }
+        draw();
+      })();
     </script>
+
+    <script type="module" src="/src/main.jsx"></script>
   </body>
 </html>
