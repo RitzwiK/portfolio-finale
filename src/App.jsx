@@ -1189,22 +1189,23 @@ em{font-family:'Instrument Serif',serif;font-style:italic;font-weight:400;letter
 
 /* ══════════════════════════════════════════════
    MOBILE / RESPONSIVE
+   Goal: keep the desktop intro (globe + moon + name + fly-in) on mobile too,
+   just rescaled & repositioned for portrait viewports. Desktop CSS above is unchanged.
    ══════════════════════════════════════════════ */
+
+/* TABLET / large phones (≤968px) — keep intro, tighten layout. */
 @media(max-width:968px){
   .hero{padding:120px 24px 40px}
   .hero-meta{flex-direction:column;align-items:flex-start;gap:32px}
   .hero-meta-grid{grid-template-columns:repeat(3,1fr);gap:20px;width:100%}
   .hero-globe-col,.hero-globe-spacer{display:none!important}
-  .globe-stage{display:none!important}
-  .name-stage{display:none!important}
-  .hero-title-fade{opacity:1!important}
-  .hero-fly{transform:none!important;opacity:1!important}
   .hero-ticker{margin:0 -24px}
   .about-grid{grid-template-columns:1fr!important;gap:60px}
+  .about-photo{aspect-ratio:4/5;max-width:480px;margin:0 auto}
   .stack-inner{grid-template-columns:1fr!important;min-height:auto}
   .stack-inner.flipped .stack-body{order:2;border-right:none;border-top:1px solid var(--border)}
   .stack-inner.flipped .stack-media{order:1}
-  .stack-media{min-height:280px;border-right:none;border-bottom:1px solid var(--border)}
+  .stack-media{min-height:340px;border-right:none;border-bottom:1px solid var(--border)}
   .stack-body{padding:32px 28px}
   .section-head{grid-template-columns:60px 1fr;gap:16px;margin-bottom:40px}
   .section{padding:90px 24px}
@@ -1216,21 +1217,217 @@ em{font-family:'Instrument Serif',serif;font-style:italic;font-weight:400;letter
   .contact-grid-v2{grid-template-columns:1fr;gap:24px}
   .footer-huge{padding:48px 24px 32px}
   .footer-meta{padding:0 24px}
+  /* Globe stays — slightly smaller container so it doesn't overflow narrower viewports */
+  .globe-stage-inner{width:min(110vh,110vw);height:min(110vh,110vw)}
 }
+
 @media(max-width:640px){
   .hero-status{font-size:10px;padding:7px 12px}
   .counters{gap:32px}
   .pd-grid{grid-template-columns:1fr;gap:40px}
 }
+
+/* PHONE (≤768px) — keep intro globe + moon + name reveal, just retuned for portrait */
 @media(max-width:768px){
-  .music-wrap{bottom:12px;right:12px}
-  .music-player{max-width:240px}
-  .mp-cover{width:32px;height:32px}
-  .mp-hint{display:none}
-  .back-to-top{bottom:14px;left:14px;width:36px;height:36px}
   .pill-nav{display:none!important}
   .mobile-nav{display:flex!important}
-  .resume-btn{display:none!important}
+
+  /* Resume button — kept, just compacted into top-right */
+  .resume-btn{
+    top:12px;right:14px;
+    padding:8px 14px;font-size:11px;letter-spacing:0.04em;
+  }
+  .resume-btn .arr{display:none}
+
+  /* Hero text scales down for portrait */
+  .hero{padding:96px 20px 32px}
+  .hero-inner{gap:28px}
+  .hero-title{font-size:clamp(64px,22vw,140px);line-height:0.86}
+  .hero-meta-grid{grid-template-columns:1fr 1fr;gap:18px 24px}
+  .hm-label{font-size:13px}
+  .hm-val{font-size:13px}
+  .hero-status{font-size:10px;padding:7px 14px;letter-spacing:0.08em}
+  .hero-status em{font-size:12px}
+  .hero-ctas{gap:10px;width:100%}
+  .hero-ctas > *{flex:1}
+  .btn-primary,.btn-ghost{padding:14px 22px;font-size:13px;width:100%;justify-content:center}
+
+  /* Globe stage — sized for portrait so it doesn't get cropped sideways */
+  .globe-stage-inner{
+    width:min(140vw,90vh);
+    height:min(140vw,90vh);
+  }
+
+  /* Name stage tuned for portrait. Settles to 20px from left, 25vh from top. */
+  .name-stage{
+    font-size:clamp(64px,22vw,140px);
+    transform:
+      translate3d(
+        calc(20px + (50vw - 20px) * var(--intro-inv, 1)),
+        calc(25vh + (50vh - 25vh) * var(--intro-inv, 1)),
+        0
+      )
+      translate(
+        calc(-50% * var(--intro-inv, 1)),
+        calc(-50% * var(--intro-inv, 1))
+      )
+      scale(calc(1 + 0.15 * var(--intro-inv, 1)));
+    text-shadow:
+      0 4px 28px rgba(0,0,0,0.95),
+      0 2px 10px rgba(0,0,0,0.85),
+      0 0 2px rgba(0,0,0,0.6);
+  }
+
+  /* Hero-fly distances tightened so content doesn't fly all the way off-screen on a phone */
+  .hero-fly-tl    { transform: translate3d(calc(-22vw * var(--intro-inv, 1)), calc(-18vh * var(--intro-inv, 1)), 0) rotate(calc(-6deg * var(--intro-inv, 1))); opacity: var(--intro-prog, 1) }
+  .hero-fly-bl    { transform: translate3d(calc(-18vw * var(--intro-inv, 1)), calc(20vh * var(--intro-inv, 1)), 0) rotate(calc(4deg * var(--intro-inv, 1))); opacity: var(--intro-prog, 1) }
+  .hero-fly-br    { transform: translate3d(calc(22vw * var(--intro-inv, 1)), calc(18vh * var(--intro-inv, 1)), 0) rotate(calc(-4deg * var(--intro-inv, 1))); opacity: var(--intro-prog, 1) }
+  .hero-fly-down  { transform: translate3d(0, calc(20vh * var(--intro-inv, 1)), 0); opacity: var(--intro-prog, 1) }
+
+  /* Section heads — keep editorial feel but smaller */
+  .section{padding:80px 20px}
+  .section-head{grid-template-columns:50px 1fr;gap:14px;margin-bottom:36px}
+  .section-num{font-size:14px}
+  .s-tag{font-size:10px;letter-spacing:0.18em}
+  .s-head{font-size:clamp(40px,11vw,72px)}
+  .s-head-big{font-size:clamp(52px,15vw,110px)}
+  .about-head{font-size:clamp(56px,16vw,120px)}
+  .section-about{padding-top:100px}
+  .section-head-tall{margin-bottom:48px}
+
+  /* About */
+  .about-text p{font-size:15px;line-height:1.7}
+  .counters{gap:36px;margin-top:32px}
+  .count-num{font-size:42px}
+  .counter-label{font-size:9px;letter-spacing:0.16em}
+  .about-photo-wrap{margin-top:20px}
+  .about-photo{aspect-ratio:4/5;max-width:none}
+  .photo-caption{font-size:10px;bottom:-22px}
+  .photo-caption em{font-size:12px}
+
+  /* Skills marquee */
+  .section-skills{padding:50px 0 80px}
+  .section-skills .section-head{padding:0 20px;margin-bottom:32px}
+  .marquee-item{padding:11px 22px;font-size:12px}
+  .marquee-left .marquee-track,.marquee-right .marquee-track{animation-duration:38s}
+
+  /* Stack cards — vertical, bigger media */
+  .section-projects{padding:70px 20px 100px}
+  .stack-hint{font-size:9px;letter-spacing:0.16em;margin-bottom:24px}
+  .scroll-line-h{width:28px}
+  .stack-wrap{position:relative!important;top:auto!important;margin-bottom:32px}
+  .stack-card{transform:none!important;opacity:1!important;filter:none!important;border-radius:16px}
+  .stack-media{aspect-ratio:16/10;min-height:0}
+  .stack-media-blank span{font-size:80px}
+  .stack-body{padding:28px 24px;gap:14px}
+  .stack-num{font-size:15px}
+  .stack-period{font-size:10px;letter-spacing:0.08em}
+  .stack-tag{font-size:10px}
+  .stack-title{font-size:clamp(28px,7vw,42px)}
+  .stack-desc{font-size:14px}
+  .stack-chip{font-size:10px;padding:3px 8px}
+  .stack-cta{font-size:12px}
+
+  /* Experience */
+  .exp-card-v2{padding:22px 0;gap:8px}
+  .exp-card-v2:hover{padding-left:0}
+  .exp-period{font-size:11px}
+  .exp-role-line h4{font-size:24px}
+  .exp-org{font-size:18px}
+  .exp-body p{font-size:14px;line-height:1.6}
+
+  /* Contact */
+  .section-contact{padding:80px 20px 60px}
+  .contact-grid-v2{gap:14px}
+  .contact-cta-v2{padding:24px;gap:14px}
+  .cta-ico-wrap{width:46px;height:46px;border-radius:11px}
+  .cta-label{font-size:10px;letter-spacing:0.1em}
+  .cta-val{font-size:16px}
+  .contact-link-v2{padding:14px 18px;gap:14px}
+  .cl-ico{width:34px;height:34px;border-radius:9px}
+  .cl-val{font-size:14px}
+
+  /* Footer */
+  .footer-huge{padding:40px 20px 28px;font-size:clamp(64px,22vw,160px)}
+  .footer-meta{padding:0 20px;font-size:10px;flex-direction:column;align-items:flex-start;gap:8px}
+
+  /* Hero ticker */
+  .hero-ticker{margin:0 -20px;padding:14px 0}
+  .ticker-item{font-size:18px;gap:24px}
+  .hero-ticker-track,.footer-ticker-track{gap:24px}
+
+  /* Music + back-to-top */
+  .music-wrap{bottom:14px;right:14px}
+  .music-player{max-width:220px;padding:6px 10px 6px 6px;gap:8px;border-radius:12px}
+  .mp-cover{width:34px;height:34px;border-radius:7px}
+  .mp-title{font-size:10px}
+  .mp-artist{font-size:8px}
+  .mp-hint{display:none}
+  .back-to-top{bottom:16px;left:16px;width:38px;height:38px}
+
+  /* Project detail */
+  .project-detail{padding:90px 20px 60px}
+  .pd-back{font-size:13px;margin-bottom:32px}
+  .pd-meta{font-size:10px;letter-spacing:0.12em}
+  .pd-title{font-size:clamp(36px,11vw,64px);margin-bottom:32px}
+  .pd-hero{aspect-ratio:4/3;border-radius:14px;margin-bottom:40px}
+  .pd-grid{grid-template-columns:1fr;gap:36px;margin-bottom:40px}
+  .pd-sec-head{font-size:24px}
+  .pd-prose{font-size:15px}
+
+  /* Resume modal — full-screen on phone */
+  .resume-overlay{padding:0}
+  .resume-modal{width:100%;height:100vh;border-radius:0;border:none;max-width:none}
+  .resume-header{padding:14px 18px}
+  .resume-title{font-size:18px}
+
+  /* Touch feedback replaces hover */
+  .stack-inner:hover .stack-media img{transform:none}
+  .stack-inner:active .stack-card{transform:scale(0.99)}
+  .btn-primary:hover,.btn-ghost:hover,.contact-cta-v2:hover,.contact-link-v2:hover{transform:none}
+  .btn-primary:active{transform:scale(0.97)}
+  .btn-ghost:active{transform:scale(0.97)}
+  .contact-cta-v2:active,.contact-link-v2:active{transform:scale(0.99)}
+  .mag{transform:none!important;transition:none!important}
+
+  /* Tap targets */
+  .pill-btn,.mp-btn,.mob-btn,.pd-back,.resume-close{min-height:44px}
+  .mp-btn{padding:8px}
+
+  /* Cursor effects off on touch */
+  body{cursor:auto!important}
+  #cursor-spot,#cursor-trail{display:none!important}
 }
+
+/* SMALL PHONES (≤480px) — final tighten */
+@media(max-width:480px){
+  .hero{padding:88px 16px 28px}
+  .hero-title{font-size:clamp(56px,24vw,120px)}
+  .section{padding:64px 16px}
+  .section-skills .section-head{padding:0 16px}
+  .section-projects{padding-left:16px;padding-right:16px}
+  .section-contact{padding-left:16px;padding-right:16px}
+  .footer-huge{padding:32px 16px 24px}
+  .footer-meta{padding:0 16px}
+  .stack-body{padding:22px 18px}
+  .pd-title{font-size:clamp(32px,10vw,56px)}
+  .ticker-item{font-size:16px}
+  .marquee-item{padding:9px 18px;font-size:11px}
+  .name-stage{font-size:clamp(56px,22vw,120px)}
+  .nav-brand{font-size:18px}
+  .mob-btn{padding:7px 12px;font-size:11px}
+  .counters{gap:24px 32px}
+  .count-num{font-size:36px}
+}
+
+/* TOUCH-DEVICE GENERAL (any size with touch input) */
+@media(hover:none) and (pointer:coarse){
+  .stack-inner:hover .stack-media img{transform:none}
+  .marquee-track:has(.marquee-item:hover) .marquee-item{opacity:1;color:var(--cream-dim)}
+  .marquee-track:has(.marquee-item:hover) .marquee-item:hover{transform:none;box-shadow:none}
+  .mag{transform:none!important}
+  .hero-ticker:hover .hero-ticker-track,.footer-ticker:hover .footer-ticker-track{animation-play-state:running}
+}
+
 @media(min-width:769px){.mobile-nav{display:none!important}}
 `;
