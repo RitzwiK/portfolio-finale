@@ -4,7 +4,7 @@ import * as THREE from "three";
 /* ═══════════════════════════════════════════════
    PHOTO — Replace with your image URL or base64
    ═══════════════════════════════════════════════ */
-const PHOTO_URL = "public/me.png";
+const PHOTO_URL = "/me.png";
 /* ── PROJECT DATA ── */
 const PROJECTS = [
   { id:"f1", num:"01", title:"F1 Analysis & Predictions", subtitle:"Data Science • Dashboard", period:"Jul – Nov 2025",
