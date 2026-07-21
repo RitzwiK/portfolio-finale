@@ -1,29 +1,26 @@
 import { useState, useEffect, useRef } from "react";
 import * as THREE from "three";
 
-/* ═══════════════════════════════════════════════
-   PHOTO — Replace with your image URL or base64
-   ═══════════════════════════════════════════════ */
 const PHOTO_URL = "/me.png";
 /* ── PROJECT DATA ── */
 const PROJECTS = [
-  { id:"f1", num:"01", title:"F1 Analysis & Predictions", subtitle:"Data Science • Dashboard", period:"Jul – Nov 2025",
-    cover:"/projects/f1-cover.png", coverGradient:null, images:["/projects/f1-1.png","/projects/f1-2.png","/projects/f1-3.png","/projects/f1-4.png","/projects/f1-5.png","/projects/f1-6.png","/projects/f1-7.png","/projects/f1-8.png","/projects/f1-9.png","/projects/f1-10.png","/projects/f1-11.png"], link:null,
+  { id:"f1", num:"01", title:"SLIPSTREAM", subtitle:"Data Science • Dashboard", period:"Jul – Nov 2025",
+    cover:"/projects/f1-cover.png", coverGradient:null, images:["/projects/f1-1.png","/projects/f1-2.png","/projects/f1-3.png","/projects/f1-4.png","/projects/f1-5.png","/projects/f1-6.png","/projects/f1-7.png","/projects/f1-8.png","/projects/f1-9.png","/projects/f1-10.png","/projects/f1-11.png"], link:"https://slipstream-f1-eda.netlify.app",
     desc:"Ingested 45+ years of F1 race data with automated ETL pipelines. Built Lasso Regression models achieving R² > 0.85 for championship forecasting.",
     stack:["Python","Pandas","Scikit-Learn","Lasso Regression","Clustering","Streamlit","Jupyter"],
     longDesc:"This project involved processing and analyzing over four decades of Formula 1 racing data. Using automated pandas ETL pipelines with modular feature engineering, the data was cleaned and made ready for predictive modeling. Lasso Regression was applied to forecast championship standings with high accuracy. K-means clustering identified performance patterns across different circuit types and weather conditions. The final deliverable was a full interactive Streamlit web application." },
   { id:"fuelsense", num:"02", title:"FuelSense", subtitle:"Analytics • Geospatial", period:"Dec 2024 – May 2025",
-    cover:"/projects/fs-cover.png", coverGradient:null, images:["/projects/fs-1.png","/projects/fs-2.jpg","/projects/fs-3.png","/projects/fs-4.png","/projects/fs-5.png"], link:"https://fuelsense.streamlit.app",
+    cover:"/projects/fs-cover.png", coverGradient:null, images:["/projects/fs-1.png","/projects/fs-2.jpg","/projects/fs-3.jpg","/projects/fs-4.png","/projects/fs-5.png","/projects/fs-6.png","/projects/fs-7.png"], link:"https://fuelsense-66in.onrender.com",
     desc:"Analyzed fuel consumption across vehicle categories with geospatial mapping and regional clustering.",
     stack:["Python","Matplotlib","Scikit-Learn","Geospatial Analysis","Streamlit"],
     longDesc:"FuelSense processes fuel-consumption-per-kilometer data across diverse vehicle categories and geographic regions. Regional clustering and geospatial mapping uncover consumption pattern differences at scale. The deployed Streamlit dashboard provides dynamic charts, geospatial visualizations, and region-wise comparison tools." },
-  { id:"acrs", num:"03", title:"ACRS — Automated Code Review", subtitle:"GNN • Full-Stack", period:"2024 – 2025",
-    cover:"/projects/acrs-cover.png", coverGradient:null, images:["/projects/acrs-1.png","/projects/acrs-2.png","/projects/acrs-3.png","/projects/acrs-4.png","/projects/acrs-5.png","/projects/acrs-6.png","/projects/acrs-7.png","/projects/acrs-8.png"], link:"https://acrscan.vercel.app",
+  { id:"acrs", num:"03", title:"ACRS — Automated Code Review", subtitle:"GNN • Full-Stack", period:"Jan 2026 – May 2026",
+    cover:"/projects/acrs-cover.png", coverGradient:null, images:["/projects/acrs-1.png","/projects/acrs-2.png","/projects/acrs-3.png","/projects/acrs-4.png","/projects/acrs-5.png","/projects/acrs-6.png","/projects/acrs-7.png","/projects/acrs-8.png","/projects/acrs-9.png","/projects/acrs-10.png"], link:"https://acrscan.vercel.app",
     desc:"GNN-based code review platform using a custom Graph Attention Network built from scratch in NumPy.",
     stack:["Python","NumPy","Flask","React","D3.js","Vite","Vercel","Render"],
     longDesc:"ACRS is a GNN-based code review platform. The system uses a custom Graph Attention Network (GAT) implemented entirely from scratch in NumPy, parsing source code into unified program graphs combining AST, CFG, and DFG. Backend on Flask/Render, frontend on React/D3.js/Vercel." },
-  { id:"anchor", num:"04", title:"Anchor", subtitle:"GenAI • Causal ML", period:"2026",
-    cover:"/projects/anchor-cover.jpg", coverGradient:null, images:["/projects/anchor-1.jpg","/projects/anchor-2.jpg","/projects/anchor-3.jpg","/projects/anchor-4.jpg",,"/projects/anchor-5.jpg",,"/projects/anchor-6.jpg",,"/projects/anchor-7.jpg"], link:null,
+  { id:"anchor", num:"04", title:"Anchor", subtitle:"GenAI • Causal ML", period:"Feb 2026 - April 2026",
+    cover:"/projects/anchor-cover.jpg", coverGradient:null, images:["/projects/anchor-1.jpg","/projects/anchor-2.jpg","/projects/anchor-3.jpg","/projects/anchor-4.jpg","/projects/anchor-5.jpg",,"/projects/anchor-6.jpg","/projects/anchor-7.jpg","/projects/anchor-8.jpg","/projects/anchor-9.jpg"], link:"https://anchor-cgr.vercel.app",
     desc:"Causal Prompt Anchoring system that grounds LLM outputs in discovered root causes, verified by a novel CGR metric.",
     stack:["Python","FastAPI","React","Vite","STL","Isolation Forest","Granger Causality","PC Algorithm"],
     longDesc:"Full-stack research project for the Generative AI in Business Use Cases course. The FastAPI backend runs STL decomposition, Isolation Forest anomaly detection, PC algorithm + Granger causality for causal discovery, and backward root-cause tracing. LLM generation is constrained by Causal Prompt Anchoring (CPA), and outputs are verified against a novel CGR (Causal Grounding Ratio) metric. React/Vite frontend with a black-and-white Apple-inspired design. Co-authors: Janmay, Shubhang Gandevia, Aryan Nair." },
